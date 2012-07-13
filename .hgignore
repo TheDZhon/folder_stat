@@ -1,0 +1,7 @@
+syntax: glob
+bin/*
+build/win32/cmake/sln/*
+*.ncb
+*.user
+tmp/*
+*.suo

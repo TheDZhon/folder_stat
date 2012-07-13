@@ -1,0 +1,1 @@
+call gen_sln_aux_.bat 2012
