@@ -173,6 +173,10 @@
 			<Filter
 				Name="core"
 				>
+				<File
+					RelativePath="..\..\..\..\src\core\fs_collector.cpp"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="ui"
@@ -189,7 +193,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<Filter
-				Name="ui"
+				Name="gui"
 				>
 				<File
 					RelativePath="..\..\..\..\src\gui\fs_main_window.h"
