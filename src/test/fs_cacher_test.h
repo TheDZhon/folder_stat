@@ -52,7 +52,7 @@ namespace test
 		void testClear ();
 	private:
 		void prepareData () const;
-	private:
+
 		core::Cacher cacher_;
 	};
 }

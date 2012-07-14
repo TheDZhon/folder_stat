@@ -25,28 +25,27 @@
 //    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
-#ifndef FS_STAT_DATA_TEST_H__
-#define FS_STAT_DATA_TEST_H__
+#include "fs_collector.h"
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
-	#pragma once
-#endif
+namespace core
+{
+	Collector::Collector (QObject* parent /*= NULL*/) :
+		QObject (parent),
+		cacher_()
+	{}
 
-#include "core/fs_stat_data.h"
-
-#include <QObject>
-
-namespace test {
-	class StatDataTest: public QObject
+	void Collector::collect (const QString& path, CachePolicy p /*= kCacheAll*/)
 	{
-		Q_OBJECT
-	private slots:
-	private:
-		void prepareData () const;
 
-		core::StatData stat_data_;
-	};
+	}
+
+	void Collector::pause (const QString& path)
+	{
+
+	}
+
+	void Collector::cancel (const QString& path)
+	{
+
+	}
 }
-
-#endif // FS_STAT_DATA_TEST_H__
-

@@ -29,16 +29,17 @@
 #define FS_COLLECTOR_H__
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
-	#pragma once
+#pragma once
 #endif
 
 #include "fs_cacher.h"
 
 #include <QObject>
 
-namespace core {
-	class Cacher;
-	class Collector: public QObject 
+namespace core
+{
+	class Collector: public QObject
+	{
 		Q_OBJECT
 	public:
 		enum CachePolicy {
@@ -47,24 +48,30 @@ namespace core {
 			kNoCache
 		};
 
-		Collector (QObject * parent = NULL);
+		enum ProgressUpdate {
+			kStarted,
+			kDirCollected,
+			kStatCalculated,
+			kFinished
+		};
+
+		Collector (QObject* parent = NULL);
 		virtual ~Collector () {};
 	public slots:
-		void collect (const QString & path, CachePolicy p = kCacheAll);
-		void pause (const QString & path);
-		void cancel (const QString & path);
-		void clearCache ();
+		void collect (const QString& path, CachePolicy p = kCacheAll);
+		void pause (const QString& path);
+		void cancel (const QString& path);
+
+		inline void clearCache () { cacher_.clear(); }
 	signals:
+		void progress (const QString&, ProgressUpdate) const;
 		void finished (const QString&, const StatDataPtr&) const;
 		void paused (const QString&) const;
 		void canceled (const QString&) const;
-		void cacheCleared () const;
 	private:
-		typedef QScopedPointer<Cacher> CacherPtr;
-
 		Q_DISABLE_COPY (Collector);
 
-		CacherPtr cacher_;
+		Cacher cacher_;
 	};
 }
 
