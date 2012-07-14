@@ -38,7 +38,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;.&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtTest&quot;;&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)&quot;;&quot;.\.\..\..\..\..\tmp\GeneratedFiles&quot;"
+				AdditionalIncludeDirectories=".;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtTest&quot;;&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)&quot;;.\.\..\..\..\..\tmp\GeneratedFiles;.\.\..\..\..\..\src"
 				PreprocessorDefinitions=",UNICODE,WIN32,QT_LARGEFILE_SUPPORT;QT_DLL;QT_NO_DEBUG,NDEBUG;QT_CORE_LIB"
 				RuntimeLibrary="2"
 				TreatWChar_tAsBuiltInType="false"
@@ -110,7 +110,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;.&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtTest&quot;;&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)&quot;;&quot;.\.\..\..\..\..\tmp\GeneratedFiles&quot;"
+				AdditionalIncludeDirectories=".;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtTest&quot;;&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)&quot;;.\.\..\..\..\..\tmp\GeneratedFiles;.\.\..\..\..\..\src"
 				PreprocessorDefinitions=",UNICODE,WIN32,QT_LARGEFILE_SUPPORT;QT_DLL;QT_CORE_LIB"
 				RuntimeLibrary="3"
 				TreatWChar_tAsBuiltInType="false"
@@ -186,6 +186,10 @@
 					RelativePath="..\..\..\..\src\test\fs_collector_test.cpp"
 					>
 				</File>
+				<File
+					RelativePath="..\..\..\..\src\test\fs_stat_data_test.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -199,6 +203,28 @@
 				<File
 					RelativePath="..\..\..\..\src\test\fs_cacher_test.h"
 					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Moc&apos;ing fs_cacher_test.h..."
+							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB  &quot;-I.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtTest&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles&quot; &quot;-I.\.\..\..\..\..\src&quot;&#x0D;&#x0A;"
+							AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+							Outputs="&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Moc&apos;ing fs_cacher_test.h..."
+							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_CORE_LIB  &quot;-I.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtTest&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles&quot; &quot;-I.\.\..\..\..\..\src&quot;&#x0D;&#x0A;"
+							AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+							Outputs="&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\..\src\test\fs_collector_test.h"
@@ -223,6 +249,42 @@
 			UniqueIdentifier="{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}"
 			SourceControlFiles="false"
 			>
+			<Filter
+				Name="Release"
+				Filter="cpp;moc"
+				SourceControlFiles="false"
+				>
+				<File
+					RelativePath="..\..\..\..\tmp\GeneratedFiles\Release\moc_fs_cacher_test.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+			</Filter>
+			<Filter
+				Name="Debug"
+				Filter="cpp;moc"
+				SourceControlFiles="false"
+				>
+				<File
+					RelativePath="..\..\..\..\tmp\GeneratedFiles\Debug\moc_fs_cacher_test.cpp"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

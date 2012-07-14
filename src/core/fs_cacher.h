@@ -34,22 +34,28 @@
 
 #include "fs_stat_data.h"
 
+#include <QHash>
+
 namespace core
 {
 	class Cacher
 	{
 	public:
-		Cacher ();
-		virtual Cacher () {}
+		Cacher (): cache_() {}
+		~Cacher () {}
 
-		void store (const QString& path, const StatDataPtr & stat_data);
-		StatDataPtr get () const;
+		inline StatDataPtr get (const QString & path) const { return cache_.value(path); }
+		inline void store (const QString& path, const StatDataPtr& stat_data) { cache_.insert(path, stat_data); }
 
-		void reserve (size_t num);
-		void invalidate (const QString& path);
-		void clear ();
+		inline void reserve (size_t num) { cache_.reserve (num); }
+		inline void invalidate (const QString& path) { cache_.remove (path); }
+		inline void clear () { cache_.clear(); }
 	private:
+		typedef QHash<QString, StatDataPtr> StatDataCache;
+
 		Q_DISABLE_COPY (Cacher);
+
+		StatDataCache cache_;
 	};
 }
 

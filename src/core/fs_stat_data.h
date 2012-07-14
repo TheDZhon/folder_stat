@@ -33,16 +33,21 @@
 #endif
 
 #include <QSharedPointer>
+#include <QMetaType>
 
 namespace core {
 	class StatData {
 	public:
+		StatData() {}
+		~StatData() {}
 	private:
 		Q_DISABLE_COPY (StatData);
 	};
 
 	typedef QSharedPointer<StatData> StatDataPtr;
 }
+
+Q_DECLARE_METATYPE (core::StatDataPtr);
 
 #endif // FS_STAT_DATA_H__
 
