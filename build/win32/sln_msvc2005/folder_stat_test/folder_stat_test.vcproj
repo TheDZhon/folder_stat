@@ -4,6 +4,7 @@
 	Version="8,00"
 	Name="folder_stat_test"
 	ProjectGUID="{A35DF9D5-2A0C-4FB3-94A9-EFFF8930799D}"
+	RootNamespace="folder_stat_test"
 	Keyword="Qt4VSv1.0"
 	>
 	<Platforms>
@@ -17,7 +18,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory=".\..\..\..\..\bin\$(ConfigurationName)"
-			IntermediateDirectory=".\..\..\..\..\tmp\$(ConfigurationName)"
+			IntermediateDirectory=".\..\..\..\..\tmp\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -88,7 +89,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory=".\..\..\..\..\bin\$(ConfigurationName)"
-			IntermediateDirectory=".\..\..\..\..\tmp\$(ConfigurationName)"
+			IntermediateDirectory=".\..\..\..\..\tmp\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -162,26 +163,62 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Source Files"
+			Name="sources"
 			Filter="cpp;cxx;c;def"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
+			<File
+				RelativePath="..\..\..\..\src\test\main.cpp"
+				>
+			</File>
+			<Filter
+				Name="core"
+				>
+			</Filter>
+			<Filter
+				Name="tests"
+				>
+				<File
+					RelativePath="..\..\..\..\src\test\fs_cacher_test.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\src\test\fs_collector_test.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
-			Name="Header Files"
+			Name="headers"
 			Filter="h"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<Filter
+				Name="tests"
+				>
+				<File
+					RelativePath="..\..\..\..\src\test\fs_cacher_test.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\src\test\fs_collector_test.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\src\test\fs_stat_data_test.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
-			Name="Resource Files"
+			Name="res"
 			Filter="qrc;*"
 			UniqueIdentifier="{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}"
 			ParseFiles="false"
 			>
 		</Filter>
 		<Filter
-			Name="Generated Files"
+			Name="qt_generated"
 			Filter="moc;h;cpp"
 			UniqueIdentifier="{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}"
 			SourceControlFiles="false"
