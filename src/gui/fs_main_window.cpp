@@ -27,13 +27,16 @@
 
 #include "fs_main_window.h"
 
-MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
-	: QMainWindow(parent, flags)
+namespace gui
 {
-	ui.setupUi(this);
-}
+	MainWindow::MainWindow (QWidget* parent, Qt::WFlags flags)
+		: QMainWindow (parent, flags)
+	{
+		ui.setupUi (this);
+	}
 
-MainWindow::~MainWindow()
-{
+	MainWindow::~MainWindow()
+	{
 
+	}
 }

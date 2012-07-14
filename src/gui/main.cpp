@@ -29,6 +29,8 @@
 
 #include <QtGui/QApplication>
 
+using namespace gui;
+
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);

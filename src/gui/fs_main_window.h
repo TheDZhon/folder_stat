@@ -29,24 +29,27 @@
 #define FS_MAIN_WINDOW_H__
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
-	#pragma once
+#pragma once
 #endif
 
 #include <QtGui/QMainWindow>
 
 #include "ui_fs_main_window.h"
 
-class MainWindow : public QMainWindow
+namespace gui
 {
-	Q_OBJECT
-public:
-	MainWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
-	virtual ~MainWindow();
-private:
-	Q_DISABLE_COPY (MainWindow);
+	class MainWindow : public QMainWindow
+	{
+		Q_OBJECT
+	public:
+		MainWindow (QWidget* parent = 0, Qt::WFlags flags = 0);
+		virtual ~MainWindow();
+	private:
+		Q_DISABLE_COPY (MainWindow);
 
-	Ui::FolderStatWindowClass ui;
-};
+		Ui::FolderStatWindowClass ui;
+	};
+}
 
 #endif // FS_MAIN_WINDOW_H__
 
