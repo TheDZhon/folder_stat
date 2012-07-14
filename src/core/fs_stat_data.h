@@ -25,14 +25,24 @@
 //    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
-#include "fs_main_window.h"
+#ifndef FS_STAT_DATA_H__
+#define FS_STAT_DATA_H__
 
-#include <QtGui/QApplication>
+#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+#pragma once
+#endif
 
-int main(int argc, char *argv[])
-{
-	QApplication a(argc, argv);
-	MainWindow w;
-	w.show();
-	return a.exec();
+#include <QSharedPointer>
+
+namespace core {
+	class StatData {
+	public:
+	private:
+		Q_DISABLE_COPY (StatData);
+	};
+
+	typedef QSharedPointer<StatData> StatDataPtr;
 }
+
+#endif // FS_STAT_DATA_H__
+

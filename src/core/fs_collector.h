@@ -25,14 +25,48 @@
 //    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
-#include "fs_main_window.h"
+#ifndef FS_COLLECTOR_H__
+#define FS_COLLECTOR_H__
 
-#include <QtGui/QApplication>
+#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+	#pragma once
+#endif
 
-int main(int argc, char *argv[])
-{
-	QApplication a(argc, argv);
-	MainWindow w;
-	w.show();
-	return a.exec();
+#include "fs_cacher.h"
+
+#include <QObject>
+
+namespace core {
+	class Cacher;
+	class Collector: public QObject 
+		Q_OBJECT
+	public:
+		enum CachePolicy {
+			kCacheAll,
+			kNoTopLevelCache,
+			kNoCache
+		};
+
+		Collector (QObject * parent = NULL);
+		virtual ~Collector () {};
+	public slots:
+		void collect (const QString & path, CachePolicy p = kCacheAll);
+		void pause (const QString & path);
+		void cancel (const QString & path);
+		void clearCache ();
+	signals:
+		void finished (const QString&, const StatDataPtr&) const;
+		void paused (const QString&) const;
+		void canceled (const QString&) const;
+		void cacheCleared () const;
+	private:
+		typedef QScopedPointer<Cacher> CacherPtr;
+
+		Q_DISABLE_COPY (Collector);
+
+		CacherPtr cacher_;
+	};
 }
+
+#endif // FS_COLLECTOR_H__
+
