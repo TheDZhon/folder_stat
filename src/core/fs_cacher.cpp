@@ -25,41 +25,48 @@
 //    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
-#ifndef FS_CACHER_H__
-#define FS_CACHER_H__
+#include "fs_cacher.h"
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
-#pragma once
-#endif
-
-#include "fs_stat_data.h"
-
-#include <QHash>
-#include <QReadWriteLock>
+#include <QtGlobal>
+#include <QFileInfo>
 
 namespace core
 {
-	class Cacher
+	Cacher::Cacher() :
+		cache_(),
+		lock_()
 	{
-	public:
-		Cacher ();
-		~Cacher () {}
 
-		StatDataPtr get (const QString& path) const;
-		void store (const QString& path, const StatDataPtr& stat_data);
+	}
 
-		void reserve (size_t num);
-		void invalidate (const QString& path);
-		void clear ();
-	private:
-		typedef QHash<QString, StatDataPtr> StatDataCache;
+	core::StatDataPtr Cacher::get (const QString& path) const
+	{
+		QReadLocker _ (&lock_);
+		return cache_.value (path);
+	}
 
-		Q_DISABLE_COPY (Cacher);
+	void Cacher::store (const QString& path, const StatDataPtr& stat_data)
+	{
+		QWriteLocker _ (&lock_);
+		cache_.insert (path, stat_data);
+	}
 
-		StatDataCache cache_;
-		mutable QReadWriteLock lock_;
-	};
+	void Cacher::reserve (size_t num)
+	{
+		QWriteLocker _ (&lock_);
+		cache_.reserve (num);
+	}
+
+	void Cacher::invalidate (const QString& path)
+	{
+		QWriteLocker _ (&lock_);
+		cache_.remove (path);
+	}
+
+	void Cacher::clear()
+	{
+		QWriteLocker _ (&lock_);
+		cache_.clear();
+	}
+
 }
-
-#endif // FS_CACHER_H__
-
