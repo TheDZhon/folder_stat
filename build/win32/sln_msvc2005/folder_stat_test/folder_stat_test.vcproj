@@ -182,6 +182,10 @@
 					RelativePath="..\..\..\..\src\core\fs_collector.cpp"
 					>
 				</File>
+				<File
+					RelativePath="..\..\..\..\src\core\fs_stat_data.cpp"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="tests"

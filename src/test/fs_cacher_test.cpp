@@ -27,8 +27,6 @@
 
 #include "fs_cacher_test.h"
 
-#include "core/fs_cacher.h"
-
 #include <QTest>
 
 using namespace core;
