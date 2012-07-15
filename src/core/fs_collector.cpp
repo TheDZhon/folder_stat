@@ -27,6 +27,14 @@
 
 #include "fs_collector.h"
 
+#include <QDir>
+#include <QFileInfo>
+
+namespace {
+	const QString kNotExists = QObject::tr ("Given path is not exists");
+	const QString kNotADir = QObject::tr ("Given path is not a directory");
+}
+
 namespace core
 {
 	Collector::Collector (QObject* parent /*= NULL*/) :
@@ -34,18 +42,42 @@ namespace core
 		cacher_()
 	{}
 
-	void Collector::collect (const QString& path, CachePolicy p /*= kCacheAll*/)
+	void Collector::collectImpl (const QString& path, CachePolicy policy)
+	{
+		emit progress (path, kStarted);
+
+		const QString & canonPath = QFileInfo(path).canonicalFilePath();
+		const QFileInfo pathInfo (canonPath);
+
+		if (!pathInfo.exists()) { emit error(path, kNotExists); return; }
+		if (!pathInfo.isDir()) { emit error(path, kNotADir); return; }
+
+		if (policy != kNoCache) {
+			const StatDataPtr & from_cache = cacher_.get(canonPath);
+			if (!from_cache.isNull()) {
+				emit progress (path, kDirCollected);
+				emit progress (path, kStatCalculated);
+				emit progress (path, kFinished);
+				emit finished (path, from_cache);				
+				return;
+			}
+		}
+	}
+
+	void Collector::pauseImpl (const QString& path)
 	{
 
 	}
 
-	void Collector::pause (const QString& path)
+	void Collector::cancelImpl (const QString& path)
 	{
 
 	}
 
-	void Collector::cancel (const QString& path)
+	void Collector::clearCacheImpl (const QString& path)
 	{
+		if (path.isNull()) { cacher_.clear (); return; }
 
+		cacher_.invalidate (path);
 	}
 }

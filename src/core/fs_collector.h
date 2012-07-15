@@ -35,6 +35,10 @@
 #include "fs_cacher.h"
 
 #include <QObject>
+#include <QtCore>
+#include <QSharedPointer>
+
+namespace async = QtConcurrent;
 
 namespace core
 {
@@ -58,18 +62,31 @@ namespace core
 		Collector (QObject* parent = NULL);
 		virtual ~Collector () {};
 	public slots:
-		void collect (const QString& path, CachePolicy p = kCacheAll);
-		void pause (const QString& path);
-		void cancel (const QString& path);
-
-		inline void clearCache () { cacher_.clear(); }
+		inline void collect (const QString& path, CachePolicy policy = kCacheAll) {
+			async::run (this, &Collector::collectImpl, path, policy);
+		}
+		inline void pause (const QString& path) {
+			async::run (this, &Collector::pauseImpl, path);
+		}
+		inline void cancel (const QString& path) {
+			async::run (this, &Collector::cancelImpl, path);
+		}
+		inline void clearCache (const QString& path = QString()) {
+			async::run (this, &Collector::clearCacheImpl, path);
+		}
 	signals:
+		void error (const QString&, const QString&) const;
 		void progress (const QString&, ProgressUpdate) const;
 		void finished (const QString&, const StatDataPtr&) const;
 		void paused (const QString&) const;
 		void canceled (const QString&) const;
 	private:
 		Q_DISABLE_COPY (Collector);
+
+		void collectImpl (const QString& path, CachePolicy p);
+		void pauseImpl (const QString& path);
+		void cancelImpl (const QString& path);
+		void clearCacheImpl (const QString& path);
 
 		Cacher cacher_;
 	};
