@@ -175,6 +175,10 @@
 				Name="core"
 				>
 				<File
+					RelativePath="..\..\..\..\src\core\fs_cacher.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\..\src\core\fs_collector.cpp"
 					>
 				</File>

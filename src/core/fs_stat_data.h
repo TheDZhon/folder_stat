@@ -32,16 +32,29 @@
 #pragma once
 #endif
 
+#include <QtGlobal>
 #include <QSharedPointer>
 #include <QMetaType>
+#include <QFileInfo>
+#include <QHash>
 
-namespace core {
-	class StatData {
+namespace core
+{
+	class StatData
+	{
 	public:
+		struct ExtensionRecord {
+			quint64 count;
+			quint64 all_size_b_;
+		};
+
 		StatData() {}
 		~StatData() {}
 	private:
 		Q_DISABLE_COPY (StatData);
+
+		QFileInfoList subdirs_;
+		QHash<QString, ExtensionRecord> ext_records_;
 	};
 
 	typedef QSharedPointer<StatData> StatDataPtr;
