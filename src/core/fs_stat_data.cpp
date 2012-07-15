@@ -25,31 +25,29 @@
 //    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
-#ifndef FS_STAT_DATA_TEST_H__
-#define FS_STAT_DATA_TEST_H__
+#include "fs_stat_data.h"
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
-	#pragma once
-#endif
-
-#include "core/fs_stat_data.h"
-
-#include <QObject>
-
-namespace test {
-	class StatDataTest: public QObject
-	{
-		Q_OBJECT
-	private slots:
-		void testSetAndGetSubdirs_data() const;
-		void testSetAndGetSubdirs ();
-
-		void testIncExtCnt_data () const;
-		void testIncExtCnt ();
-
-		void initTestCase() const;
-	};
+namespace
+{
+	const quint64 kULLZero = Q_UINT64_C (0);
 }
 
-#endif // FS_STAT_DATA_TEST_H__
+namespace core
+{
+	StatData::ExtensionRecord::ExtensionRecord () :
+		count_ (kULLZero),
+		all_size_b_ (kULLZero)
+	{}
 
+	void StatData::incExtCnt (const QString& ext, quint64 sz)
+	{
+		ExtensionRecord& record = ext_records_[ext];
+		++record.count_;
+		record.all_size_b_ += sz;
+	}
+
+	bool operator==(const StatData::ExtensionRecord& l, const StatData::ExtensionRecord& r)
+	{
+		return (l.count_ == r.count_) && (l.all_size_b_ == r.all_size_b_);
+	}
+}
