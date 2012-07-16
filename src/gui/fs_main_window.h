@@ -32,9 +32,12 @@
 #pragma once
 #endif
 
-#include <QtGui/QMainWindow>
-
 #include "ui_fs_main_window.h"
+
+#include "core/fs_collector.h"
+
+#include <QtGui/QMainWindow>
+#include <QSystemTrayIcon>
 
 namespace gui
 {
@@ -44,10 +47,33 @@ namespace gui
 	public:
 		MainWindow (QWidget* parent = 0, Qt::WFlags flags = 0);
 		virtual ~MainWindow();
+
+		virtual void setVisible(bool);
+	private slots:
+		void handleQuitAction ();
+		void handleRefreshAction ();
+		void handleSettingsAction ();
+		void handleAboutAction ();
+
+		void handleTrayActivated(QSystemTrayIcon::ActivationReason);
+
+		void handleError (const QString& path, const QString & error);
+		void handleProgress (const QString & path, core::Collector::ProgressUpdate);
+		void handleFinished (const QString & path, const core::StatDataPtr & data);
 	private:
 		Q_DISABLE_COPY (MainWindow);
 
+		void configureUi ();
+		void connectUi () const;
+
+		virtual void closeEvent (QCloseEvent*);
+
+		void loadWindowState ();
+		void saveWindowState () const;
+
 		Ui::FolderStatWindowClass ui;
+
+		QSystemTrayIcon tray_icon_;
 	};
 }
 

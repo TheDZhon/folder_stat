@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>FolderStatWindowClass</class>
  <widget class="QMainWindow" name="FolderStatWindowClass">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>FolderStatWindow</string>
+   <string>Folder Stat GUI</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -72,20 +75,19 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="actionExit"/>
+    <addaction name="quitAction"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
-     <string>&amp;Settings</string>
+     <string>&amp;Edit</string>
     </property>
-    <addaction name="actionCache"/>
-    <addaction name="actionTray"/>
+    <addaction name="settingsAction"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
      <string>&amp;Help</string>
     </property>
-    <addaction name="actionAbout"/>
+    <addaction name="aboutAction"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menuSettings"/>
@@ -98,26 +100,52 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="refreshAction"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionCache">
+  <action name="settingsAction">
    <property name="text">
-    <string>Cache</string>
+    <string>&amp;Settings</string>
    </property>
   </action>
-  <action name="actionTray">
+  <action name="aboutAction">
    <property name="text">
-    <string>Tray</string>
+    <string>&amp;About</string>
    </property>
   </action>
-  <action name="actionAbout">
+  <action name="quitAction">
    <property name="text">
-    <string>About</string>
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
-  <action name="actionExit">
+  <action name="refreshAction">
    <property name="text">
-    <string>&amp;Exit</string>
+    <string>Refresh</string>
+   </property>
+   <property name="toolTip">
+    <string>Refresh stats</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="restoreWindowAction">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Restore Window</string>
+   </property>
+   <property name="toolTip">
+    <string>Restore Window</string>
+   </property>
+  </action>
+  <action name="hideWindowAction">
+   <property name="text">
+    <string>Hide Window</string>
    </property>
   </action>
  </widget>
@@ -125,5 +153,38 @@
  <resources>
   <include location="../resources/fs_main_window.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>restoreWindowAction</sender>
+   <signal>triggered()</signal>
+   <receiver>FolderStatWindowClass</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>434</x>
+     <y>303</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hideWindowAction</sender>
+   <signal>triggered()</signal>
+   <receiver>FolderStatWindowClass</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>434</x>
+     <y>303</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
