@@ -41,7 +41,8 @@ SET (TMP_DIR ${TOP_DIR}/tmp)
 # --- Qt ---
 
 SET (CMAKE_AUTOMOC TRUE)
-SET (UIS ${PROJECT_SOURCE_DIR}/ui/fs_main_window.ui)
+SET (UIS ${PROJECT_SOURCE_DIR}/ui/fs_main_window.ui 
+	${PROJECT_SOURCE_DIR}/ui/fs_settings_dialog.ui)
 SET (RCCS ${PROJECT_SOURCE_DIR}/resources/fs_main_window.qrc)
 
 FIND_PACKAGE (Qt4 REQUIRED)
