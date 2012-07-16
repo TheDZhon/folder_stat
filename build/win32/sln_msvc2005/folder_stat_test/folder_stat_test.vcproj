@@ -17,7 +17,7 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\..\..\..\bin\$(ConfigurationName)"
+			OutputDirectory=".\..\..\..\..\bin\"
 			IntermediateDirectory=".\..\..\..\..\tmp\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
@@ -88,7 +88,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\..\..\..\..\bin\$(ConfigurationName)"
+			OutputDirectory=".\..\..\..\..\bin\"
 			IntermediateDirectory=".\..\..\..\..\tmp\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
@@ -128,7 +128,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="qtmaind.lib QtCored4.lib QtTestd4.lib"
-				OutputFile="$(OutDir)\$(ProjectName).exe"
+				OutputFile="$(OutDir)\$(ProjectName)_d.exe"
 				AdditionalLibraryDirectories="$(QTDIR)\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
