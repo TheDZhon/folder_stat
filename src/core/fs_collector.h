@@ -56,7 +56,8 @@ namespace core
 			kStarted,
 			kDirCollected,
 			kStatCalculated,
-			kFinished
+			kPaused,
+			kCanceled
 		};
 
 		Collector (QObject* parent = NULL);
@@ -68,6 +69,9 @@ namespace core
 		inline void pause (const QString& path) {
 			async::run (this, &Collector::pauseImpl, path);
 		}
+		inline void resume (const QString & path) {
+			async::run (this, &Collector::resumeImpl, path);
+		}
 		inline void cancel (const QString& path) {
 			async::run (this, &Collector::cancelImpl, path);
 		}
@@ -78,13 +82,12 @@ namespace core
 		void error (const QString&, const QString&) const;
 		void progress (const QString&, ProgressUpdate) const;
 		void finished (const QString&, const StatDataPtr&) const;
-		void paused (const QString&) const;
-		void canceled (const QString&) const;
 	private:
 		Q_DISABLE_COPY (Collector);
 
 		void collectImpl (const QString& path, CachePolicy p);
 		void pauseImpl (const QString& path);
+		void resumeImpl (const QString& path);
 		void cancelImpl (const QString& path);
 		void clearCacheImpl (const QString& path);
 

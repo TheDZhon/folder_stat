@@ -55,7 +55,7 @@ namespace test {
 	private:
 		void prepareData () const;
 
-		core::Collector collector_;
+		QHash<QString, core::StatDataPtr> expected_stats_;
 	};
 }
 

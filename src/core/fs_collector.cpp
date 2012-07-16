@@ -33,6 +33,13 @@
 namespace {
 	const QString kNotExists = QObject::tr ("Given path is not exists");
 	const QString kNotADir = QObject::tr ("Given path is not a directory");
+
+	const QDir::Filters kDirsFilter = QDir::Dirs
+		| QDir::Readable
+		| QDir::Hidden
+		| QDir::System
+		| QDir::NoSymLinks
+		| QDir::NoDotAndDotDot;
 }
 
 namespace core
@@ -57,14 +64,22 @@ namespace core
 			if (!from_cache.isNull()) {
 				emit progress (path, kDirCollected);
 				emit progress (path, kStatCalculated);
-				emit progress (path, kFinished);
 				emit finished (path, from_cache);				
 				return;
 			}
 		}
+
+		StatDataPtr answer (new StatData);
+		const QFileInfoList & pathChildren = QDir (canonPath).entryInfoList(kDirsFilter);
+		
 	}
 
 	void Collector::pauseImpl (const QString& path)
+	{
+
+	}
+
+	void Collector::resumeImpl(const QString& path)
 	{
 
 	}

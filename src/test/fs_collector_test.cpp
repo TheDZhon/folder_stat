@@ -33,8 +33,13 @@
 #include <QTest>
 #include <QStringList>
 #include <QDebug>
+#include <QVector>
 
 #include <algorithm>
+#include <functional>
+#include <ctime>
+
+typedef QVector<size_t> SizeTVector;
 
 using namespace core;
 
@@ -57,15 +62,57 @@ namespace
 
 	const char* kMkPathErrorMess = "Can't create necessary folders in TEMP, check permissions";
 	const char* kRmPathErrorMess = "Can't remove necessary folders in TEMP, check permissions";
+	const char* kMkFileErrorMess = "Can't create necessary files in TEMP, check permissions";
+
+	const QIODevice::OpenMode kDefaultOpenMode = QIODevice::WriteOnly | QIODevice::Truncate;
+	const size_t kDefaultFileSz = 10;
+	const size_t kRandDiv = 1000;
 }
 
-inline void mkPathFunc (const QString& path)
+inline size_t smallRand ()
+{
+	return qrand() / kRandDiv;
+}
+
+inline void mkPath (const QString& path)
 {
 	QVERIFY2 (kTempPath.mkpath (path), kMkPathErrorMess);
 }
-inline void rmPathFunc (const QString& path)
+
+inline void rmPath (const QString& path)
 {
 	QVERIFY2 (kTempPath.rmpath (path), kRmPathErrorMess);
+}
+
+void createFiles (const QString& path, const SizeTVector& cnt_list)
+{
+	typedef SizeTVector::const_iterator It;
+
+	for (It it = cnt_list.begin();
+		 it != cnt_list.end();
+		 ++it) {
+		const size_t index = std::distance (cnt_list.begin(), it);
+		for (size_t i = 0; i < *it; ++i) {
+			const QString fname = kTempPath.canonicalPath()
+								  + "/"
+								  + path
+								  + "/"
+								  + QString::number (i)
+								  + "."
+								  + QString::number (index);
+
+			QFile current_file (fname);
+			QVERIFY2 (current_file.open (kDefaultOpenMode), kMkFileErrorMess);
+			QVERIFY (current_file.write (QByteArray (kDefaultFileSz, '0')) > 0);
+		}
+	}
+}
+
+void createSubdirs (const QString& path, size_t subdirs_cnt)
+{
+	for (size_t i = 0; i < subdirs_cnt; ++i) {
+		mkPath (path + "/" + QString::number (i));
+	}
 }
 
 namespace test
@@ -87,24 +134,37 @@ namespace test
 
 	void CollectorTest::initTestCase()
 	{
-		qDebug() << "Using" << QDir().toNativeSeparators(kTempPath.path()) << "as TEMP folder";
+		qsrand (time (NULL));
 
-		std::for_each (kAllPaths.begin(), kAllPaths.end(), &mkPathFunc);
+		qDebug() << "Using" << QDir().toNativeSeparators (kTempPath.path()) << "as TEMP folder";
+
+		std::for_each (kAllPaths.begin(), kAllPaths.end(), &mkPath);
+
+		createFiles (kSingleFilePath, SizeTVector() << 1);
+
+		const size_t nested_dirs_cnt = smallRand();
+		createSubdirs (kNestedCleanPath, nested_dirs_cnt);
+
+		const size_t one_level_dirs_cnt = smallRand();
+		const size_t one_level_files_cnt = smallRand();
+		SizeTVector files_cnt_list (one_level_files_cnt);
+		std::generate (files_cnt_list.begin(), files_cnt_list.end(), smallRand);
+		createSubdirs (kOneLevelPath, one_level_dirs_cnt);
+		createFiles (kOneLevelPath, files_cnt_list);
 	}
 
 	void CollectorTest::cleanupTestCase()
 	{
-		std::for_each (kAllPaths.begin(), kAllPaths.end(), &rmPathFunc);
+		//std::for_each (kAllPaths.begin(), kAllPaths.end(), &rmPath);
 	}
 
 	void CollectorTest::prepareData() const
 	{
-		QTest::addColumn<QString> ("path");
-		QTest::addColumn<StatDataPtr> ("stat_data");
+		QTest::addColumn<StatDataPtr> ("expected_stat_data");
 
-		QTest::newRow ("all_empty") << "" << StatDataPtr();
-
-		StatDataPtr cleanDataPtr;
-		QTest::newRow ("clean_folder") << kCleanPath << cleanDataPtr;
+		QTest::newRow (kCleanPath.toAscii().constData()) << expected_stats_[kCleanPath];
+		QTest::newRow (kSingleFilePath.toAscii().constData()) << expected_stats_[kSingleFilePath];
+		QTest::newRow (kNestedCleanPath.toAscii().constData()) << expected_stats_[kNestedCleanPath];
+		QTest::newRow (kOneLevelPath.toAscii().constData()) << expected_stats_[kOneLevelPath];
 	}
 }
