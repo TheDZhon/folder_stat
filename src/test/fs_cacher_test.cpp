@@ -38,8 +38,10 @@ namespace test
 		QFETCH (QString, path);
 		QFETCH (StatDataPtr, stat_data);
 
-		cacher_.store (path, stat_data);
-		const StatDataPtr & sd_from_cache = cacher_.get (path);
+		Cacher cacher;
+
+		cacher.store (path, stat_data);
+		const StatDataPtr& sd_from_cache = cacher.get (path);
 
 		QCOMPARE (sd_from_cache, stat_data);
 	}
@@ -49,9 +51,11 @@ namespace test
 		QFETCH (QString, path);
 		QFETCH (StatDataPtr, stat_data);
 
-		cacher_.store(path, stat_data);
-		cacher_.invalidate(path);
-		const StatDataPtr & sd_from_cache = cacher_.get (path);
+		Cacher cacher;
+
+		cacher.store (path, stat_data);
+		cacher.invalidate (path);
+		const StatDataPtr& sd_from_cache = cacher.get (path);
 
 		QVERIFY (sd_from_cache.isNull());
 	}
@@ -61,9 +65,11 @@ namespace test
 		QFETCH (QString, path);
 		QFETCH (StatDataPtr, stat_data);
 
-		cacher_.store(path, stat_data);
-		cacher_.clear();
-		const StatDataPtr & sd_from_cache = cacher_.get(path);
+		Cacher cacher;
+
+		cacher.store (path, stat_data);
+		cacher.clear();
+		const StatDataPtr& sd_from_cache = cacher.get (path);
 
 		QVERIFY (sd_from_cache.isNull());
 	}

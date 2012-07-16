@@ -38,6 +38,7 @@ using namespace core;
 namespace
 {
 	const QFileInfo kRootPath = QDir::rootPath();
+	const size_t kRandDiv = 100;
 }
 
 namespace test
@@ -73,14 +74,14 @@ namespace test
 		StatData::ExtRecordsMap one_item_map;
 		StatData::ExtensionRecord one_item;
 		one_item.count_ = 10;
-		one_item_map.insert("exe", one_item);
+		one_item_map.insert ("exe", one_item);
 
 		StatData::ExtRecordsMap common_map;
-		const size_t items_cnt = qrand ()/100;
+		const size_t items_cnt = qrand () / kRandDiv;
 		for (size_t i = 0; i < items_cnt; ++i) {
 			StatData::ExtensionRecord current_item;
-			current_item.count_ = qrand()/100 + 1;
-			common_map.insert(QString::number(i), current_item);
+			current_item.count_ = qrand() / kRandDiv + 1;
+			common_map.insert (QString::number (i), current_item);
 		}
 
 		QTest::newRow ("empty") << StatData::ExtRecordsMap();
@@ -107,7 +108,8 @@ namespace test
 		QCOMPARE (stat_data.extRecords(), expected_map);
 	}
 
-	void StatDataTest::initTestCase() const {
-		qsrand(time(NULL));
+	void StatDataTest::initTestCase() const
+	{
+		qsrand (time (NULL));
 	}
 }
