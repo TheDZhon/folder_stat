@@ -1,5 +1,5 @@
 #--------------------------------------------------------------------------------------------------------------------------------------------
-#    Copyright (c) 2012, Eugene Mamin <TheDZhon@gmail.com>
+#    Copyright (c) 2011, Eugene Mamin <TheDZhon@gmail.com>
 #    All rights reserved.
 #
 #    Redistribution and use in source and binary forms, with or without
@@ -9,14 +9,14 @@
 #        * Redistributions in binary form must reproduce the above copyright
 #        notice, this list of conditions and the following disclaimer in the
 #        documentation and/or other materials provided with the distribution.
-#        * Neither the name of the Prefix Increment nor the
+#        * Neither the name of the <organization> nor the
 #        names of its contributors may be used to endorse or promote products
 #        derived from this software without specific prior written permission.
 #
-#    THIS SOFTWARE IS PROVIDED BY Eugene Mamin <TheDZhon@gmail.com> ''AS IS'' AND ANY
+#    THIS SOFTWARE IS PROVIDED BY <copyright holder> <email> ''AS IS'' AND ANY
 #    EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 #    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-#    DISCLAIMED. IN NO EVENT SHALL Eugene Mamin <TheDZhon@gmail.com> BE LIABLE FOR ANY
+#    DISCLAIMED. IN NO EVENT SHALL <copyright holder> <email> BE LIABLE FOR ANY
 #    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 #    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 #    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -25,31 +25,22 @@
 #    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #---------------------------------------------------------------------------------------------------------------------------------------------
 
-# Root CMake file
-
-# --- Definition ---
-
-CMAKE_MINIMUM_REQUIRED (VERSION 2.8.6 FATAL_ERROR)
-PROJECT (folder_stat)
-
-GET_FILENAME_COMPONENT (TOP_DIR ${PROJECT_SOURCE_DIR} PATH)
-SET (CMAKE_USER_MAKE_RULES_OVERRIDE_CXX
-	 ${TOP_DIR}/cmake/cxx_flag_overrides.cmake)
-
-# --- Common ---
-
-INCLUDE_DIRECTORIES (${PROJECT_BINARY_DIR})
-SET (TOP_BIN_DIR ${PROJECT_BINARY_DIR})
-
-# --- Options
-
-OPTION (ENABLE_TESTS "Build tests" ON)
-
-# --- Projects
-
-ADD_SUBDIRECTORY (gui)
-
-IF (ENABLE_TESTS)
-	ENABLE_TESTING ()	
-	ADD_SUBDIRECTORY (test)
-ENDIF (ENABLE_TESTS)
+IF (MSVC)
+	SET (CMAKE_CXX_FLAGS "/EHa /W3")
+	SET (CMAKE_CXX_FLAGS_RELEASE "/Ob2 /O2 /Ot /Oi /Oy /GT /GL /MD /D NDEBUG")
+	SET (CMAKE_CXX_FLAGS_DEBUG "/Zi /Od /GT /MDd")
+ENDIF (MSVC)
+IF (UNIX)
+	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fno-strict-aliasing")
+	SET (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--as-needed")
+	SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--as-needed")
+	IF (EXTRA_WARNINGS)
+		SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+	ENDIF (EXTRA_WARNINGS)
+	IF (USE_PIPE)
+		SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe")
+	ENDIF (USE_PIPE)
+ENDIF (UNIX)
+IF (WIN32 AND NOT MSVC)
+	SET (CMAKE_CXX_FLAGS "-Wall")
+ENDIF (WIN32 AND NOT MSVC)
