@@ -27,6 +27,7 @@
 
 #include "fs_collector_test.h"
 
+#include "test/fs_test_utils.h"
 #include "core/fs_collector.h"
 
 #include <QDir>
@@ -66,12 +67,9 @@ namespace
 
 	const QIODevice::OpenMode kDefaultOpenMode = QIODevice::WriteOnly | QIODevice::Truncate;
 	const size_t kDefaultFileSz = 10;
-	const size_t kRandDiv = 1000;
-}
+	const size_t kRandDiv = 10;
 
-inline size_t smallRand ()
-{
-	return qrand() / kRandDiv;
+	const test::range_rand pos_rand_f = test::range_rand(1, kRandDiv); 
 }
 
 inline void mkPath (const QString& path)
@@ -142,13 +140,13 @@ namespace test
 
 		createFiles (kSingleFilePath, SizeTVector() << 1);
 
-		const size_t nested_dirs_cnt = smallRand();
+		const size_t nested_dirs_cnt = pos_rand_f ();
 		createSubdirs (kNestedCleanPath, nested_dirs_cnt);
 
-		const size_t one_level_dirs_cnt = smallRand();
-		const size_t one_level_files_cnt = smallRand();
+		const size_t one_level_dirs_cnt = pos_rand_f ();
+		const size_t one_level_files_cnt = pos_rand_f ();
 		SizeTVector files_cnt_list (one_level_files_cnt);
-		std::generate (files_cnt_list.begin(), files_cnt_list.end(), smallRand);
+		std::generate (files_cnt_list.begin(), files_cnt_list.end(), pos_rand_f);
 		createSubdirs (kOneLevelPath, one_level_dirs_cnt);
 		createFiles (kOneLevelPath, files_cnt_list);
 	}

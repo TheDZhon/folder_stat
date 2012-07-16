@@ -27,6 +27,8 @@
 
 #include "fs_stat_data_test.h"
 
+#include "test/fs_test_utils.h"
+
 #include <QtGlobal>
 #include <QTest>
 #include <QDir>
@@ -38,7 +40,9 @@ using namespace core;
 namespace
 {
 	const QFileInfo kRootPath = QDir::rootPath();
-	const size_t kRandDiv = 100;
+	const size_t kRandDiv = 10;
+
+	const test::range_rand pos_rand_f = test::range_rand(1, kRandDiv);
 }
 
 namespace test
@@ -77,10 +81,10 @@ namespace test
 		one_item_map.insert ("exe", one_item);
 
 		StatData::ExtRecordsMap common_map;
-		const size_t items_cnt = qrand () / kRandDiv;
+		const size_t items_cnt = pos_rand_f ();
 		for (size_t i = 0; i < items_cnt; ++i) {
 			StatData::ExtensionRecord current_item;
-			current_item.count_ = qrand() / kRandDiv + 1;
+			current_item.count_ = pos_rand_f ();
 			common_map.insert (QString::number (i), current_item);
 		}
 
