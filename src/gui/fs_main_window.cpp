@@ -46,7 +46,9 @@ namespace gui
 	MainWindow::MainWindow (QWidget* parent, Qt::WFlags flags)
 		: QMainWindow (parent, flags),
 		  ui(),
-		  tray_icon_()
+		  tray_icon_(),
+		  settings_dialog_(),
+		  settings_data_ (settings_dialog_.settings())
 	{
 		ui.setupUi (this);
 
@@ -67,8 +69,9 @@ namespace gui
 
 	void MainWindow::handleQuitAction()
 	{
+		settings_dialog_.setSettings (settings_data_);
 		saveWindowState();
-		qApp->quit();
+		close ();
 	}
 
 	void MainWindow::handleRefreshAction()
@@ -77,7 +80,12 @@ namespace gui
 
 	void MainWindow::handleSettingsAction()
 	{
+		const int exit_status = settings_dialog_.exec();
+		if (exit_status == QDialog::Rejected) { return; }
 
+		settings_data_ = settings_dialog_.settings();
+
+		processSettingsData();
 	}
 
 	void MainWindow::handleAboutAction()
@@ -94,7 +102,9 @@ namespace gui
 	{
 		switch (reason) {
 			case QSystemTrayIcon::DoubleClick:
-				setVisible (!isVisible());
+				if (settings_data_.allow_minimize_to_tray_) {
+					setVisible (!isVisible());
+				};
 				break;
 			case QSystemTrayIcon::MiddleClick:
 				tray_icon_.showMessage ("Current status", statusBar()->currentMessage());
@@ -109,7 +119,9 @@ namespace gui
 		const QString err_mess = "Error processing " + path + ": " + error;
 
 		statusBar()->showMessage (err_mess);
-		tray_icon_.showMessage (tr ("Error"), err_mess, QSystemTrayIcon::Critical);
+		if (settings_data_.show_notifications_) {
+			tray_icon_.showMessage (tr ("Error"), err_mess, QSystemTrayIcon::Critical);
+		}
 	}
 
 	void MainWindow::handleProgress (const QString& path, core::Collector::ProgressUpdate p)
@@ -117,7 +129,9 @@ namespace gui
 		const QString update_mess = "Processing update: " + path + ": " + QString::number (p);
 
 		statusBar()->showMessage (update_mess);
-		tray_icon_.showMessage (tr ("Update"), update_mess, QSystemTrayIcon::Information);
+		if (settings_data_.show_notifications_) {
+			tray_icon_.showMessage (tr ("Update"), update_mess, QSystemTrayIcon::Information);
+		}
 	}
 
 	void MainWindow::handleFinished (const QString& path, const StatDataPtr& ptr)
@@ -131,14 +145,19 @@ namespace gui
 
 		statusBar()->showMessage ("Idle");
 
-		tray_icon_.setIcon (windowIcon());
-		tray_icon_.setContextMenu (new QMenu);
-		tray_icon_.contextMenu()->addAction (ui.hideWindowAction);
-		tray_icon_.contextMenu()->addAction (ui.restoreWindowAction);
-		tray_icon_.contextMenu()->addSeparator();
-		tray_icon_.contextMenu()->addAction (ui.quitAction);
+		ui.hideWindowAction->setIcon (style()->standardIcon (QStyle::SP_TitleBarMinButton));
+		ui.restoreWindowAction->setIcon (style()->standardIcon (QStyle::SP_TitleBarNormalButton));
 
-		tray_icon_.show();
+		tray_icon_.setIcon (windowIcon());
+
+		tray_icon_.setContextMenu (new QMenu);
+		QMenu* m = tray_icon_.contextMenu();
+		m->addAction (ui.hideWindowAction);
+		m->addAction (ui.restoreWindowAction);
+		m->addSeparator();
+		m->addAction (ui.quitAction);
+
+		processSettingsData();
 	}
 
 	void MainWindow::connectUi() const
@@ -166,10 +185,15 @@ namespace gui
 
 	void MainWindow::closeEvent (QCloseEvent* ev)
 	{
+		if (!settings_data_.exit_confirmation_) { handleQuitAction(); return; }
+
 		QMessageBox confirmMsgBox;
 		confirmMsgBox.addButton (tr ("Quit"), QMessageBox::AcceptRole);
-		const QPushButton* hideButton = confirmMsgBox.addButton (tr ("Hide"), QMessageBox::ActionRole);
-		const QPushButton* cancelButton = confirmMsgBox.addButton (tr ("Cancel"), QMessageBox::RejectRole);
+		const QPushButton* hideButton = settings_data_.allow_minimize_to_tray_ ?
+										confirmMsgBox.addButton (tr ("Hide"), QMessageBox::ActionRole)
+										: 0;
+		const QPushButton* cancelButton =
+			confirmMsgBox.addButton (tr ("Cancel"), QMessageBox::RejectRole);
 
 		confirmMsgBox.setWindowTitle (tr ("Quit confirmation"));
 		confirmMsgBox.setText (tr ("Are you sure you want to exit")
@@ -185,9 +209,11 @@ namespace gui
 		}
 
 		if (confirmMsgBox.clickedButton() == hideButton) {
-			tray_icon_.showMessage (tr (kAppName), tr ("The program will keep running in the "
-													   "system tray. To terminate the program, "
-													   "choose \"Quit\" in the context menu "));
+			if (settings_data_.show_notifications_) {
+				tray_icon_.showMessage (tr (kAppName), tr ("The program will keep running in the "
+														   "system tray. To terminate the program, "
+														   "choose \"Quit\" in the context menu "));
+			}
 			hide();
 			ev->ignore();
 			return;
@@ -212,5 +238,12 @@ namespace gui
 		sets.beginGroup ("gui");
 		sets.setValue ("geometry", saveGeometry());
 		sets.setValue ("state", saveState());
+	}
+
+	void MainWindow::processSettingsData()
+	{
+		tray_icon_.setVisible (settings_data_.tray_icon_);
+		ui.hideWindowAction->setEnabled (settings_data_.allow_minimize_to_tray_);
+		ui.restoreWindowAction->setEnabled (settings_data_.allow_minimize_to_tray_);
 	}
 }

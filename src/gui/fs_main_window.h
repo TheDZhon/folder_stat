@@ -34,6 +34,7 @@
 
 #include "ui_fs_main_window.h"
 
+#include "gui/fs_settings_dialog.h"
 #include "core/fs_collector.h"
 
 #include <QtGui/QMainWindow>
@@ -73,9 +74,14 @@ namespace gui
 		void loadWindowState ();
 		void saveWindowState () const;
 
-		Ui::FolderStatWindowClass ui;
+		void processSettingsData ();
+
+		Ui::MainWindow ui;
 
 		QSystemTrayIcon tray_icon_;
+		SettingsDialog settings_dialog_;
+
+		SettingsData settings_data_;
 	};
 }
 
