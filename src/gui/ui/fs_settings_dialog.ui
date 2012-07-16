@@ -206,7 +206,7 @@
   </connection>
   <connection>
    <sender>trayIconCheckBox</sender>
-   <signal>clicked(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>allowMinimizeToTrayCheckBox</receiver>
    <slot>setChecked(bool)</slot>
    <hints>
@@ -222,7 +222,7 @@
   </connection>
   <connection>
    <sender>trayIconCheckBox</sender>
-   <signal>clicked(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>allowMinimizeToTrayCheckBox</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
@@ -238,7 +238,7 @@
   </connection>
   <connection>
    <sender>trayIconCheckBox</sender>
-   <signal>clicked(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>showNotificationsCheckBox</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
@@ -254,7 +254,7 @@
   </connection>
   <connection>
    <sender>trayIconCheckBox</sender>
-   <signal>clicked(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>showNotificationsCheckBox</receiver>
    <slot>setChecked(bool)</slot>
    <hints>

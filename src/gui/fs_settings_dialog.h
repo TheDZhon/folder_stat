@@ -60,7 +60,6 @@ namespace gui
 		Q_DISABLE_COPY (SettingsDialog);
 
 		void connectUi ();
-		void initSettings ();
 
 		Ui::SettingsDialog ui;
 		SettingsData settings_data_;

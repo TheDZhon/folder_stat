@@ -46,9 +46,8 @@ namespace gui
 	{
 		ui.setupUi (this);
 
-		loadState();
-		initSettings();
 		connectUi();
+		loadState();
 	}
 
 	SettingsDialog::~SettingsDialog()
@@ -103,20 +102,13 @@ namespace gui
 				 SLOT (handleCache()));
 	}
 
-	void SettingsDialog::initSettings()
-	{
-		handleGeneral();
-		handleTray();
-		handleCache();
-	}
-
 	void SettingsDialog::loadState()
 	{
 		QSettings sets (kOrgName, kAppName);
 
 		sets.beginGroup ("settings");
 
-		ui.exitConfirmationCheckBox->setChecked (sets.value ("exit_confirm", true).toBool());
+		ui.exitConfirmationCheckBox->setChecked(sets.value ("exit_confirm", true).toBool());
 		ui.trayIconCheckBox->setChecked (sets.value ("tray_icon", true).toBool());
 		ui.allowMinimizeToTrayCheckBox->setChecked (sets.value ("allow_min_to_tray", true).toBool());
 		ui.showNotificationsCheckBox->setChecked (sets.value ("notifications", true).toBool());
