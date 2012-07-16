@@ -28,7 +28,7 @@ echo Destination path: %TARGET_SLN_PATH%
 if not exist %TARGET_SLN_PATH% mkdir %TARGET_SLN_PATH%
 cd %TARGET_SLN_PATH%
 
-cmake ../../../../src ^
+cmake ../../../../../src ^
 	-G "%GEN_NAME%" ^
 	-DENABLE_TESTS=True
 
