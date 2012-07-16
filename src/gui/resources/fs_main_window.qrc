@@ -1,4 +1,10 @@
 <RCC>
-    <qresource prefix="FolderStatWindow">
-    </qresource>
+  <qresource prefix="/icons">
+    <file alias="exit">icons/application-exit.png</file>
+    <file alias="drive">icons/drive-harddisk.png</file>
+    <file alias="folder">icons/folder-blue.png</file>
+    <file alias="logo">icons/meeting-observer.png</file>
+    <file alias="preferences">icons/preferences-system.png</file>
+    <file alias="refresh">icons/system-reboot.png</file>
+  </qresource>
 </RCC>
