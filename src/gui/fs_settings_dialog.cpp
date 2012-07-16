@@ -127,8 +127,8 @@ namespace gui
 		sets.setValue ("tray_icon", settings_data_.tray_icon_);
 		sets.setValue ("allow_min_to_tray", settings_data_.allow_minimize_to_tray_);
 		sets.setValue ("notifications", settings_data_.show_notifications_);
-		sets.setValue ("notify_timeout", settings_data_.notification_timeout_);
+		sets.setValue ("notify_timeout", static_cast<int>(settings_data_.notification_timeout_));
 		sets.setValue ("default_policy", settings_data_.default_policy_);
-		sets.setValue ("max_cache_items", settings_data_.max_cache_items_);
+		sets.setValue ("max_cache_items", static_cast<int>(settings_data_.max_cache_items_));
 	}
 }
