@@ -53,7 +53,9 @@ namespace gui
 		void handleQuitAction ();
 		void handleRefreshAction ();
 		void handleSettingsAction ();
+
 		void handleAboutAction ();
+		void handleAboutQtAction ();
 
 		void handleTrayActivated(QSystemTrayIcon::ActivationReason);
 

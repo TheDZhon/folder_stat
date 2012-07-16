@@ -37,7 +37,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;.&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)&quot;;&quot;.\.\..\..\..\..\tmp\GeneratedFiles&quot;"
+				AdditionalIncludeDirectories=".;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)&quot;;.\.\..\..\..\..\tmp\GeneratedFiles;.\.\..\..\..\..\src"
 				PreprocessorDefinitions=",UNICODE,WIN32,QT_LARGEFILE_SUPPORT;QT_DLL;QT_NO_DEBUG,NDEBUG;QT_CORE_LIB;QT_GUI_LIB"
 				RuntimeLibrary="2"
 				TreatWChar_tAsBuiltInType="false"
@@ -109,7 +109,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;.&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)&quot;;&quot;.\.\..\..\..\..\tmp\GeneratedFiles&quot;"
+				AdditionalIncludeDirectories=".;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)&quot;;.\.\..\..\..\..\tmp\GeneratedFiles;.\.\..\..\..\..\src"
 				PreprocessorDefinitions=",UNICODE,WIN32,QT_LARGEFILE_SUPPORT;QT_DLL;QT_CORE_LIB;QT_GUI_LIB"
 				RuntimeLibrary="3"
 				TreatWChar_tAsBuiltInType="false"
@@ -212,7 +212,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Moc&apos;ing fs_main_window.h..."
-							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB &quot;-I.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles&quot;&#x0D;&#x0A;"
+							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB  &quot;-I.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles&quot; &quot;-I.\.\..\..\..\..\src&quot;&#x0D;&#x0A;"
 							AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 							Outputs="&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 						/>
@@ -223,15 +223,11 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Moc&apos;ing fs_main_window.h..."
-							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB &quot;-I.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles&quot;&#x0D;&#x0A;"
+							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB  &quot;-I.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles&quot; &quot;-I.\.\..\..\..\..\src&quot;&#x0D;&#x0A;"
 							AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 							Outputs="&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 						/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\..\src\gui\fs_tray.h"
-					>
 				</File>
 			</Filter>
 			<Filter
@@ -250,7 +246,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Moc&apos;ing fs_collector.h..."
-							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB &quot;-I.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles&quot;&#x0D;&#x0A;"
+							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB  &quot;-I.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles&quot; &quot;-I.\.\..\..\..\..\src&quot;&#x0D;&#x0A;"
 							AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 							Outputs="&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 						/>
@@ -261,7 +257,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Moc&apos;ing fs_collector.h..."
-							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB &quot;-I.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles&quot;&#x0D;&#x0A;"
+							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB  &quot;-I.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles&quot; &quot;-I.\.\..\..\..\..\src&quot;&#x0D;&#x0A;"
 							AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 							Outputs="&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 						/>

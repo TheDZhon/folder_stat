@@ -88,6 +88,7 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="aboutAction"/>
+    <addaction name="aboutQtAction"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menuSettings"/>
@@ -146,6 +147,11 @@
   <action name="hideWindowAction">
    <property name="text">
     <string>Hide Window</string>
+   </property>
+  </action>
+  <action name="aboutQtAction">
+   <property name="text">
+    <string>About Qt</string>
    </property>
   </action>
  </widget>

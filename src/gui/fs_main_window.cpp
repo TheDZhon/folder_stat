@@ -36,8 +36,9 @@ using namespace core;
 
 namespace
 {
-	const char * kAppName = "Folder Stat GUI";
-	const char * kOrgName = "PrefixInc";
+	const char* kAppName = "Folder Stat GUI";
+	const char* kOrgName = "PrefixInc";
+	const char* kCopyright = "(c) 2012, Eugene Mamin";
 }
 
 namespace gui
@@ -81,7 +82,12 @@ namespace gui
 
 	void MainWindow::handleAboutAction()
 	{
+		QMessageBox::about (this, "About", QString (kAppName) + " " + QString (kCopyright));
+	}
 
+	void MainWindow::handleAboutQtAction()
+	{
+		QMessageBox::aboutQt (this);
 	}
 
 	void MainWindow::handleTrayActivated (QSystemTrayIcon::ActivationReason reason)
@@ -98,33 +104,33 @@ namespace gui
 		}
 	}
 
-	void MainWindow::handleError(const QString& path, const QString & error)
+	void MainWindow::handleError (const QString& path, const QString& error)
 	{
 		const QString err_mess = "Error processing " + path + ": " + error;
 
-		statusBar()->showMessage(err_mess);
-		tray_icon_.showMessage(tr("Error"), err_mess, QSystemTrayIcon::Critical);
+		statusBar()->showMessage (err_mess);
+		tray_icon_.showMessage (tr ("Error"), err_mess, QSystemTrayIcon::Critical);
 	}
 
-	void MainWindow::handleProgress(const QString & path, core::Collector::ProgressUpdate p)
+	void MainWindow::handleProgress (const QString& path, core::Collector::ProgressUpdate p)
 	{
-		const QString update_mess = "Processing update: " + path + ": " + QString::number(p);
+		const QString update_mess = "Processing update: " + path + ": " + QString::number (p);
 
-		statusBar()->showMessage(update_mess);
-		tray_icon_.showMessage(tr("Update"), update_mess, QSystemTrayIcon::Information);
+		statusBar()->showMessage (update_mess);
+		tray_icon_.showMessage (tr ("Update"), update_mess, QSystemTrayIcon::Information);
 	}
 
-	void MainWindow::handleFinished(const QString & path, const StatDataPtr& ptr)
+	void MainWindow::handleFinished (const QString& path, const StatDataPtr& ptr)
 	{
 		// build tree
 	}
 
 	void MainWindow::configureUi()
 	{
-		setWindowTitle(tr(kAppName));
+		setWindowTitle (tr (kAppName));
 
 		statusBar()->showMessage ("Idle");
-		
+
 		tray_icon_.setIcon (windowIcon());
 		tray_icon_.setContextMenu (new QMenu);
 		tray_icon_.contextMenu()->addAction (ui.hideWindowAction);
@@ -149,6 +155,9 @@ namespace gui
 		connect (ui.aboutAction,
 				 SIGNAL (triggered()),
 				 SLOT (handleAboutAction()));
+		connect (ui.aboutQtAction,
+				 SIGNAL (triggered()),
+				 SLOT (handleAboutQtAction()));
 
 		connect (&tray_icon_,
 				 SIGNAL (activated (QSystemTrayIcon::ActivationReason)),
@@ -158,7 +167,7 @@ namespace gui
 	void MainWindow::closeEvent (QCloseEvent* ev)
 	{
 		QMessageBox confirmMsgBox;
-		confirmMsgBox.addButton (tr ("Ok"), QMessageBox::AcceptRole);
+		confirmMsgBox.addButton (tr ("Quit"), QMessageBox::AcceptRole);
 		const QPushButton* hideButton = confirmMsgBox.addButton (tr ("Hide"), QMessageBox::ActionRole);
 		const QPushButton* cancelButton = confirmMsgBox.addButton (tr ("Cancel"), QMessageBox::RejectRole);
 
@@ -177,8 +186,8 @@ namespace gui
 
 		if (confirmMsgBox.clickedButton() == hideButton) {
 			tray_icon_.showMessage (tr (kAppName), tr ("The program will keep running in the "
-																"system tray. To terminate the program, "
-																"choose <b>Exit</b> in the context menu "));
+													   "system tray. To terminate the program, "
+													   "choose \"Quit\" in the context menu "));
 			hide();
 			ev->ignore();
 			return;

@@ -290,6 +290,10 @@
 						/>
 					</FileConfiguration>
 				</File>
+				<File
+					RelativePath="..\..\..\..\src\test\fs_test_utils.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="core"
