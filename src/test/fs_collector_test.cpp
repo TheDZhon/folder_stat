@@ -77,9 +77,9 @@ inline void mkPath (const QString& path)
 	QVERIFY2 (kTempPath.mkpath (path), kMkPathErrorMess);
 }
 
-inline void rmPath (const QString& path)
+inline void cleanupFunc (const QString &path)
 {
-	QVERIFY2 (kTempPath.rmpath (path), kRmPathErrorMess);
+	QVERIFY2 (test::rmPathRecursive(kTempPath.canonicalPath() + "/" + path), kRmPathErrorMess);
 }
 
 void createFiles (const QString& path, const SizeTVector& cnt_list)
@@ -153,7 +153,7 @@ namespace test
 
 	void CollectorTest::cleanupTestCase()
 	{
-		//std::for_each (kAllPaths.begin(), kAllPaths.end(), &rmPath);
+		std::for_each (kAllPaths.begin(), kAllPaths.end(), &cleanupFunc);
 	}
 
 	void CollectorTest::prepareData() const

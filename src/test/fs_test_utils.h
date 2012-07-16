@@ -33,6 +33,13 @@
 #endif
 
 #include <QtGlobal>
+#include <QFileInfo>
+#include <QDir>
+
+namespace
+{
+	const QDir::Filters kDirsFilter = QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files | QDir::DirsFirst;
+}
 
 namespace test
 {
@@ -48,6 +55,24 @@ namespace test
 		size_t min_;
 		size_t max_;
 	};
+
+	static bool rmPathRecursive (const QString& path)
+	{
+		const QDir dir (path);
+
+		if (!dir.exists()) { return true; }
+
+		const QFileInfoList& children = dir.entryInfoList (kDirsFilter);
+		typedef QFileInfoList::const_iterator It;
+		for (It it = children.begin();
+			 it != children.end();
+			 ++it) {
+			if (it->isDir() && !rmPathRecursive (it->absoluteFilePath())) { return false; }
+			if (it->isFile() && !QFile::remove (it->absoluteFilePath())) { return false; }
+		}
+
+		return dir.rmdir (path);
+	}
 }
 
 #endif // FS_TEST_UTILS_H__
