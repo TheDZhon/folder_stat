@@ -34,4 +34,10 @@ cmake ../../../../../src ^
 
 cd ../..
 pause
+GOTO END
 
+:NFOUND
+echo Please pass one required param -- MSVS version [e.g. 2008]
+pause
+
+:END

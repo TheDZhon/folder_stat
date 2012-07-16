@@ -1,6 +1,6 @@
 syntax: glob
 bin/*
-build/win32/cmake/sln/*
+build/win32/cmake/*
 *.ncb
 *.user
 tmp/*
