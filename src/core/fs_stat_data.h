@@ -40,6 +40,9 @@
 
 namespace core
 {
+	class StatData;
+	typedef QSharedPointer<StatData> StatDataPtr;
+
 	class StatData
 	{
 	public:
@@ -55,9 +58,12 @@ namespace core
 		StatData() {}
 		~StatData() {}
 
+		void append (const StatData&);
+
 		void setSubdirs (const QFileInfoList & subdirs) { subdirs_ = subdirs; }
 		QFileInfoList subdirs () const { return subdirs_; }
 
+		void collectFilesExts (const QFileInfoList&);
 		void incExtCnt (const QString & ext, quint64 sz);
 		ExtRecordsMap extRecords () const { return ext_records_; }
 	private:
@@ -66,8 +72,6 @@ namespace core
 		QFileInfoList subdirs_;
 		QHash<QString, ExtensionRecord> ext_records_;
 	};
-
-	typedef QSharedPointer<StatData> StatDataPtr;
 
 	bool operator==(const StatData::ExtensionRecord&, const StatData::ExtensionRecord&);
 }

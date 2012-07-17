@@ -43,7 +43,7 @@ namespace gui {
 		bool show_notifications_;
 		size_t notification_timeout_;
 
-		core::Collector::CachePolicy default_policy_;
+		bool use_cache_;
 		size_t max_cache_items_;
 	};
 }

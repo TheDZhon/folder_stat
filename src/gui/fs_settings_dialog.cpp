@@ -67,7 +67,7 @@ namespace gui
 		ui.allowMinimizeToTrayCheckBox->setChecked (sets.value ("allow_min_to_tray", true).toBool());
 		ui.showNotificationsCheckBox->setChecked (sets.value ("notifications", true).toBool());
 		ui.notificationTimeoutSpinBox->setValue (sets.value ("notify_timeout", 10).toInt());
-		ui.cachePolicyComboBox->setCurrentIndex (sets.value ("default_policy").toInt());
+		ui.useCacheCheckBox->setChecked (sets.value ("use_cache").toBool());
 		ui.cacheMaxItemsSpinBox->setValue (sets.value ("max_cache_items", 10000).toInt());
 	}
 
@@ -82,7 +82,7 @@ namespace gui
 		sets.setValue ("allow_min_to_tray", settings_data_.allow_minimize_to_tray_);
 		sets.setValue ("notifications", settings_data_.show_notifications_);
 		sets.setValue ("notify_timeout", static_cast<int> (settings_data_.notification_timeout_));
-		sets.setValue ("default_policy", settings_data_.default_policy_);
+		sets.setValue ("use_cache", settings_data_.use_cache_);
 		sets.setValue ("max_cache_items", static_cast<int> (settings_data_.max_cache_items_));
 	}
 
@@ -101,8 +101,8 @@ namespace gui
 
 	void SettingsDialog::handleCache()
 	{
-		settings_data_.default_policy_ = static_cast<Collector::CachePolicy> (ui.cachePolicyComboBox->currentIndex());
-		ui.cacheMaxItemsSpinBox->setEnabled (settings_data_.default_policy_ != Collector::kNoCache);
+		settings_data_.use_cache_ = ui.useCacheCheckBox->isChecked();
+		ui.cacheMaxItemsSpinBox->setEnabled (settings_data_.use_cache_);
 		settings_data_.max_cache_items_ = ui.cacheMaxItemsSpinBox->value ();
 	}
 
@@ -125,8 +125,8 @@ namespace gui
 				 SIGNAL (valueChanged (int)),
 				 SLOT (handleTray()));
 
-		connect (ui.cachePolicyComboBox,
-				 SIGNAL (currentIndexChanged (int)),
+		connect (ui.useCacheCheckBox,
+				 SIGNAL (toggled (bool)),
 				 SLOT (handleCache()));
 		connect (ui.cacheMaxItemsSpinBox,
 				 SIGNAL (valueChanged (int)),

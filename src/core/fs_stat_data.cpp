@@ -39,6 +39,32 @@ namespace core
 		all_size_b_ (kULLZero)
 	{}
 
+	void StatData::append (const StatData& other)
+	{
+		ExtRecordsMap& otherFilesMap = other.extRecords();
+		typedef ExtRecordsMap::const_iterator It;
+
+		for (It it = otherFilesMap.begin();
+			 it != otherFilesMap.end();
+			 ++it) {
+
+			const QString& ext = it.key();
+			ExtensionRecord& record = ext_records_[ext];
+
+			record.count_ += it->count_;
+			record.all_size_b_ += it->all_size_b_;
+		}
+	}
+
+	void StatData::collectFilesExts (const QFileInfoList& l)
+	{
+		typedef QFileInfoList::const_iterator It;
+
+		for (It it = l.begin(); it != l.end();
+			 ++it)
+		{ incExtCnt (it->completeSuffix(), it->size());	}
+	}
+
 	void StatData::incExtCnt (const QString& ext, quint64 sz)
 	{
 		ExtensionRecord& record = ext_records_[ext];
@@ -46,7 +72,7 @@ namespace core
 		record.all_size_b_ += sz;
 	}
 
-	bool operator==(const StatData::ExtensionRecord& l, const StatData::ExtensionRecord& r)
+	bool operator== (const StatData::ExtensionRecord& l, const StatData::ExtensionRecord& r)
 	{
 		return (l.count_ == r.count_) && (l.all_size_b_ == r.all_size_b_);
 	}

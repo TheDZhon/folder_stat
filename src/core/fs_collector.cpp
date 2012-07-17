@@ -30,48 +30,101 @@
 #include <QDir>
 #include <QFileInfo>
 
-namespace {
+namespace
+{
 	const QString kNotExists = QObject::tr ("Given path is not exists");
 	const QString kNotADir = QObject::tr ("Given path is not a directory");
 
-	const QDir::Filters kDirsFilter = QDir::Dirs
-		| QDir::Readable
-		| QDir::Hidden
-		| QDir::System
-		| QDir::NoSymLinks
-		| QDir::NoDotAndDotDot;
+	const QDir::Filters kCommonFilters = QDir::Readable
+										 | QDir::Hidden
+										 | QDir::System
+										 | QDir::NoSymLinks
+										 | QDir::NoDotAndDotDot;
+
+	const QDir::Filters kDirsFilter = QDir::Dirs | kCommonFilters;
+	const QDir::Filters kFilesFilter = QDir::Files | kCommonFilters;
 }
 
 namespace core
 {
+	struct Collector::mapper:
+			std::unary_function<const QFileInfo&, StatDataPtr> {
+
+		mapper (Collector* c,
+				bool use_cache) :
+			collector_ (c),
+			use_cache_ (use_cache) {}
+
+		StatDataPtr operator() (const QFileInfo& finfo) {
+			return collector_->collectImplAux (finfo, use_cache_);
+		}
+
+		Collector* collector_;
+		bool use_cache_;
+	};
+
+	struct Collector::reducer :
+			std::binary_function<StatDataPtr&, const StatDataPtr&, void> {
+
+		reducer (StatDataPtr acc) : acc_ (acc) { }
+
+		void operator () (StatDataPtr& acc, const StatDataPtr& cur) {
+			acc = acc_;
+			acc->append (*cur);
+		}
+
+		StatDataPtr acc_;
+	};
+
 	Collector::Collector (QObject* parent /*= NULL*/) :
 		QObject (parent),
 		cacher_()
 	{}
 
-	void Collector::collectImpl (const QString& path, CachePolicy policy)
+	void Collector::collectImpl (const QString& path, bool use_cache)
 	{
-		emit progress (path, kStarted);
-
-		const QString & canonPath = QFileInfo(path).canonicalFilePath();
+		const QString& canonPath = QFileInfo (path).canonicalFilePath();
 		const QFileInfo pathInfo (canonPath);
 
-		if (!pathInfo.exists()) { emit error(path, kNotExists); return; }
-		if (!pathInfo.isDir()) { emit error(path, kNotADir); return; }
+		if (!pathInfo.exists()) { emit error (path, kNotExists); return; }
+		if (!pathInfo.isDir()) { emit error (path, kNotADir); return; }
 
-		if (policy != kNoCache) {
-			const StatDataPtr & from_cache = cacher_.get(canonPath);
+		StatDataPtr full_answer = collectImplAux (pathInfo, use_cache);
+
+		emit finished (path, full_answer);
+	}
+
+	StatDataPtr Collector::collectImplAux (const QFileInfo& pinfo, bool use_cache)
+	{
+		typedef QFileInfoList::iterator It;
+
+		Q_ASSERT (pinfo.isDir());
+
+		const QString& cpath = pinfo.canonicalPath();
+
+		if (use_cache) {
+			const StatDataPtr& from_cache = cacher_.get (cpath);
 			if (!from_cache.isNull()) {
-				emit progress (path, kDirCollected);
-				emit progress (path, kStatCalculated);
-				emit finished (path, from_cache);				
-				return;
+				emit dirsCollected (pinfo.path(), from_cache->subdirs());
+				return from_cache;
 			}
 		}
 
 		StatDataPtr answer (new StatData);
-		const QFileInfoList & pathChildren = QDir (canonPath).entryInfoList(kDirsFilter);
-		
+
+		QFileInfoList& subdirs = getSubdirs (pinfo);
+		emit dirsCollected (pinfo.path(), subdirs);
+
+		QFileInfoList& files = getFiles (pinfo);
+
+		answer->setSubdirs (subdirs);
+		answer->collectFilesExts (files);
+
+		async::mappedReduced<StatDataPtr> (subdirs, mapper (this, use_cache), reducer (answer)).waitForFinished();
+
+		if (use_cache) { cacher_.store (pinfo.canonicalPath(), answer); }
+
+		return answer;
 	}
 
 	void Collector::pauseImpl (const QString& path)
@@ -79,7 +132,7 @@ namespace core
 
 	}
 
-	void Collector::resumeImpl(const QString& path)
+	void Collector::resumeImpl (const QString& path)
 	{
 
 	}
@@ -92,7 +145,18 @@ namespace core
 	void Collector::clearCacheImpl (const QString& path)
 	{
 		if (path.isNull()) { cacher_.clear (); return; }
-
 		cacher_.invalidate (path);
+	}
+
+	QFileInfoList Collector::getSubdirs (const QFileInfo& f) const
+	{
+		Q_ASSERT (f.isDir());
+		return QDir (f.canonicalFilePath()).entryInfoList (kDirsFilter);
+	}
+
+	QFileInfoList Collector::getFiles (const QFileInfo& f) const
+	{
+		Q_ASSERT (f.isDir());
+		return QDir (f.canonicalFilePath()).entryInfoList (kFilesFilter);
 	}
 }

@@ -61,7 +61,7 @@ namespace gui
 		void handleTrayActivated(QSystemTrayIcon::ActivationReason);
 
 		void handleError (const QString& path, const QString & error);
-		void handleProgress (const QString & path, core::Collector::ProgressUpdate);
+		void handleDirsCollected (const QString& path, const core::StatDataPtr & data);
 		void handleFinished (const QString & path, const core::StatDataPtr & data);
 	private:
 		Q_DISABLE_COPY (MainWindow);

@@ -31,8 +31,7 @@ namespace
 {
 	const QDir::Filters kDirsFilter = QDir::NoDotAndDotDot
 									  | QDir::AllDirs
-									  | QDir::Files
-									  | QDir::DirsFirst;
+									  | QDir::Files;
 
 	const QDir kTempPath = QDir::temp();
 

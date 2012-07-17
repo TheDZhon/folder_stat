@@ -46,25 +46,11 @@ namespace core
 	{
 		Q_OBJECT
 	public:
-		enum CachePolicy {
-			kCacheAll,
-			kNoTopLevelCache,
-			kNoCache
-		};
-
-		enum ProgressUpdate {
-			kStarted,
-			kDirCollected,
-			kStatCalculated,
-			kPaused,
-			kCanceled
-		};
-
 		Collector (QObject* parent = NULL);
 		virtual ~Collector () {};
 	public slots:
-		inline void collect (const QString& path, CachePolicy policy = kCacheAll) {
-			async::run (this, &Collector::collectImpl, path, policy);
+		inline void collect (const QString& path, bool use_cache = true) {
+			async::run (this, &Collector::collectImpl, path, use_cache);
 		}
 		inline void pause (const QString& path) {
 			async::run (this, &Collector::pauseImpl, path);
@@ -80,16 +66,26 @@ namespace core
 		}
 	signals:
 		void error (const QString&, const QString&) const;
-		void progress (const QString&, ProgressUpdate) const;
+		void dirsCollected (const QString&, const QFileInfoList&) const; 
 		void finished (const QString&, const StatDataPtr&) const;
 	private:
+		struct mapper;
+		struct reducer;
+
+		friend struct mapper;
+		friend struct reducer;
+
 		Q_DISABLE_COPY (Collector);
 
-		void collectImpl (const QString& path, CachePolicy p);
+		void collectImpl (const QString& path, bool use_cache);
+		StatDataPtr collectImplAux (const QFileInfo & pinfo, bool use_cache);
 		void pauseImpl (const QString& path);
 		void resumeImpl (const QString& path);
 		void cancelImpl (const QString& path);
 		void clearCacheImpl (const QString& path);
+
+		QFileInfoList getSubdirs (const QFileInfo & f) const;
+		QFileInfoList getFiles (const QFileInfo & f) const;
 
 		Cacher cacher_;
 	};

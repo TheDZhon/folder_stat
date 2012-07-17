@@ -70,8 +70,9 @@ namespace gui
 	void MainWindow::handleQuitAction()
 	{
 		settings_dialog_.setSettings (settings_data_);
+		settings_dialog_.saveState();
 		saveWindowState();
-		close ();
+		qApp->quit();
 	}
 
 	void MainWindow::handleRefreshAction()
@@ -124,14 +125,9 @@ namespace gui
 		}
 	}
 
-	void MainWindow::handleProgress (const QString& path, core::Collector::ProgressUpdate p)
+	void MainWindow::handleDirsCollected(const QString& path, const core::StatDataPtr & data)
 	{
-		const QString update_mess = "Processing update: " + path + ": " + QString::number (p);
-
-		statusBar()->showMessage (update_mess);
-		if (settings_data_.show_notifications_) {
-			tray_icon_.showMessage (tr ("Update"), update_mess, QSystemTrayIcon::Information);
-		}
+		// build tree
 	}
 
 	void MainWindow::handleFinished (const QString& path, const StatDataPtr& ptr)
