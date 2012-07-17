@@ -112,7 +112,7 @@ namespace core
 
 		StatDataPtr answer (new StatData);
 
-		QFileInfoList& subdirs = getSubdirs (pinfo);
+		const QFileInfoList& subdirs = getSubdirs (pinfo);
 		emit dirsCollected (pinfo.path(), subdirs);
 
 		QFileInfoList& files = getFiles (pinfo);
