@@ -30,24 +30,18 @@
 #include "test/fs_test_utils.h"
 #include "core/fs_collector.h"
 
-#include <QDir>
 #include <QTest>
 #include <QStringList>
 #include <QDebug>
-#include <QVector>
 
 #include <algorithm>
 #include <functional>
 #include <ctime>
 
-typedef QVector<size_t> SizeTVector;
-
 using namespace core;
 
 namespace
 {
-	const QDir kTempPath = QDir::temp();
-
 	const QString kCleanPath = "clean";
 	const QString kSingleFilePath = "single";
 	const QString kNestedCleanPath = "nested_clean";
@@ -61,56 +55,8 @@ namespace
 								  << kOneLevelPath
 								  << kCommonPath;
 
-	const char* kMkPathErrorMess = "Can't create necessary folders in TEMP, check permissions";
-	const char* kRmPathErrorMess = "Can't remove necessary folders in TEMP, check permissions";
-	const char* kMkFileErrorMess = "Can't create necessary files in TEMP, check permissions";
-
-	const QIODevice::OpenMode kDefaultOpenMode = QIODevice::WriteOnly | QIODevice::Truncate;
-	const size_t kDefaultFileSz = 10;
 	const size_t kRandDiv = 10;
-
-	const test::range_rand pos_rand_f = test::range_rand(1, kRandDiv); 
-}
-
-inline void mkPath (const QString& path)
-{
-	QVERIFY2 (kTempPath.mkpath (path), kMkPathErrorMess);
-}
-
-inline void cleanupFunc (const QString &path)
-{
-	QVERIFY2 (test::rmPathRecursive(kTempPath.canonicalPath() + "/" + path), kRmPathErrorMess);
-}
-
-void createFiles (const QString& path, const SizeTVector& cnt_list)
-{
-	typedef SizeTVector::const_iterator It;
-
-	for (It it = cnt_list.begin();
-		 it != cnt_list.end();
-		 ++it) {
-		const size_t index = std::distance (cnt_list.begin(), it);
-		for (size_t i = 0; i < *it; ++i) {
-			const QString fname = kTempPath.canonicalPath()
-								  + "/"
-								  + path
-								  + "/"
-								  + QString::number (i)
-								  + "."
-								  + QString::number (index);
-
-			QFile current_file (fname);
-			QVERIFY2 (current_file.open (kDefaultOpenMode), kMkFileErrorMess);
-			QVERIFY (current_file.write (QByteArray (kDefaultFileSz, '0')) > 0);
-		}
-	}
-}
-
-void createSubdirs (const QString& path, size_t subdirs_cnt)
-{
-	for (size_t i = 0; i < subdirs_cnt; ++i) {
-		mkPath (path + "/" + QString::number (i));
-	}
+	const test::range_rand pos_rand_f = test::range_rand (1, kRandDiv);
 }
 
 namespace test
@@ -134,26 +80,24 @@ namespace test
 	{
 		qsrand (time (NULL));
 
-		qDebug() << "Using" << QDir().toNativeSeparators (kTempPath.path()) << "as TEMP folder";
+		std::for_each (kAllPaths.begin(), kAllPaths.end(), &mkPathInTemp);
 
-		std::for_each (kAllPaths.begin(), kAllPaths.end(), &mkPath);
-
-		createFiles (kSingleFilePath, SizeTVector() << 1);
+		createTestFiles (kSingleFilePath, SizeTVector() << 1);
 
 		const size_t nested_dirs_cnt = pos_rand_f ();
-		createSubdirs (kNestedCleanPath, nested_dirs_cnt);
+		createTestSubdirs (kNestedCleanPath, nested_dirs_cnt);
 
 		const size_t one_level_dirs_cnt = pos_rand_f ();
 		const size_t one_level_files_cnt = pos_rand_f ();
 		SizeTVector files_cnt_list (one_level_files_cnt);
 		std::generate (files_cnt_list.begin(), files_cnt_list.end(), pos_rand_f);
-		createSubdirs (kOneLevelPath, one_level_dirs_cnt);
-		createFiles (kOneLevelPath, files_cnt_list);
+		createTestSubdirs (kOneLevelPath, one_level_dirs_cnt);
+		createTestFiles (kOneLevelPath, files_cnt_list);
 	}
 
 	void CollectorTest::cleanupTestCase()
 	{
-		std::for_each (kAllPaths.begin(), kAllPaths.end(), &cleanupFunc);
+		std::for_each (kAllPaths.begin(), kAllPaths.end(), &rmPathInTempRecursive);
 	}
 
 	void CollectorTest::prepareData() const

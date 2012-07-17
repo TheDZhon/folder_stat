@@ -35,19 +35,27 @@
 #include <QtGlobal>
 #include <QFileInfo>
 #include <QDir>
+#include <QVector>
+#include <QTest>
 
-namespace
-{
-	const QDir::Filters kDirsFilter = QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files | QDir::DirsFirst;
-}
+#include <algorithm>
+
+typedef QVector<size_t> SizeTVector;
 
 namespace test
 {
+	void rmPathInTempRecursive (const QString& path);
+	void mkPathInTemp (const QString& path);
+
+	void createTestFiles (const QString& path, const SizeTVector& cnt_list);
+	void createTestSubdirs (const QString& path, size_t subdirs_cnt);
+
 	struct range_rand {
 		range_rand (size_t min, size_t max) :
 			min_ (min),
 			max_ (max)
 		{}
+
 		inline size_t operator () () const {
 			return (qrand() % (max_ - min_)) + min_;
 		}
@@ -55,24 +63,6 @@ namespace test
 		size_t min_;
 		size_t max_;
 	};
-
-	static bool rmPathRecursive (const QString& path)
-	{
-		const QDir dir (path);
-
-		if (!dir.exists()) { return true; }
-
-		const QFileInfoList& children = dir.entryInfoList (kDirsFilter);
-		typedef QFileInfoList::const_iterator It;
-		for (It it = children.begin();
-			 it != children.end();
-			 ++it) {
-			if (it->isDir() && !rmPathRecursive (it->absoluteFilePath())) { return false; }
-			if (it->isFile() && !QFile::remove (it->absoluteFilePath())) { return false; }
-		}
-
-		return dir.rmdir (path);
-	}
 }
 
 #endif // FS_TEST_UTILS_H__
