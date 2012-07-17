@@ -61,6 +61,16 @@ namespace
 
 namespace test
 {
+	struct stat_data_files_fill {
+		stat_data_files_fill (StatDataPtr stat_data) : stat_data_ (stat_data) { }
+
+		inline void operator () (const QFileInfo& i) {
+			stat_data_->incExtCnt (i.completeSuffix(), kDefaultFileSz);
+		}
+
+		StatDataPtr stat_data_;
+	};
+
 	void CollectorTest::testCollect()
 	{
 
@@ -81,18 +91,35 @@ namespace test
 		qsrand (time (NULL));
 
 		std::for_each (kAllPaths.begin(), kAllPaths.end(), &mkPathInTemp);
+		const QFileInfoList& single_file_info_list = createTestFiles (kSingleFilePath, SizeTVector() << 1);
 
-		createTestFiles (kSingleFilePath, SizeTVector() << 1);
-
-		const size_t nested_dirs_cnt = pos_rand_f ();
-		createTestSubdirs (kNestedCleanPath, nested_dirs_cnt);
+		const size_t nested_clean_dirs_cnt = pos_rand_f ();
+		const QFileInfoList& nested_clean_dirs = createTestSubdirs (kNestedCleanPath, nested_clean_dirs_cnt);
 
 		const size_t one_level_dirs_cnt = pos_rand_f ();
 		const size_t one_level_files_cnt = pos_rand_f ();
 		SizeTVector files_cnt_list (one_level_files_cnt);
 		std::generate (files_cnt_list.begin(), files_cnt_list.end(), pos_rand_f);
-		createTestSubdirs (kOneLevelPath, one_level_dirs_cnt);
-		createTestFiles (kOneLevelPath, files_cnt_list);
+
+		const QFileInfoList& one_level_dirs = createTestSubdirs (kOneLevelPath, one_level_dirs_cnt);
+		const QFileInfoList& one_level_files = createTestFiles (kOneLevelPath, files_cnt_list);
+
+		expected_stats_[kCleanPath] = StatDataPtr (new StatData);
+
+		StatDataPtr single_stat_data_ptr (new StatData);
+		const QFileInfo& singleFileInfo = *single_file_info_list.begin();
+		single_stat_data_ptr->incExtCnt (singleFileInfo.completeSuffix(), kDefaultFileSz);
+		expected_stats_[kSingleFilePath] = StatDataPtr (single_stat_data_ptr);
+
+		StatDataPtr nested_clean_stat (new StatData);
+		nested_clean_stat->setSubdirs (nested_clean_dirs);
+		expected_stats_[kNestedCleanPath] = nested_clean_stat;
+
+		StatDataPtr one_level_stat (new StatData);
+		stat_data_files_fill filler (one_level_stat);
+		one_level_stat->setSubdirs (one_level_dirs);
+		std::for_each (one_level_files.begin(), one_level_files.end(), filler);
+		expected_stats_[kOneLevelPath] = one_level_stat;
 	}
 
 	void CollectorTest::cleanupTestCase()

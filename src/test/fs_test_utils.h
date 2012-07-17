@@ -44,11 +44,13 @@ typedef QVector<size_t> SizeTVector;
 
 namespace test
 {
+	static const size_t kDefaultFileSz = 10;
+
 	void rmPathInTempRecursive (const QString& path);
 	void mkPathInTemp (const QString& path);
 
-	void createTestFiles (const QString& path, const SizeTVector& cnt_list);
-	void createTestSubdirs (const QString& path, size_t subdirs_cnt);
+	QFileInfoList createTestFiles (const QString& path, const SizeTVector& cnt_list);
+	QFileInfoList createTestSubdirs (const QString& path, size_t subdirs_cnt);
 
 	struct range_rand {
 		range_rand (size_t min, size_t max) :

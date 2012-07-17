@@ -42,7 +42,6 @@ namespace
 
 	const QIODevice::OpenMode kDefaultOpenMode = QIODevice::WriteOnly
 												 | QIODevice::Truncate;
-	const size_t kDefaultFileSz = 10;
 }
 
 namespace test
@@ -77,8 +76,10 @@ namespace test
 				  QString (kMkPathErrorMess + path).toAscii().constData());
 	}
 
-	void createTestFiles (const QString& path, const SizeTVector& cnt_list)
+	QFileInfoList createTestFiles (const QString& path, const SizeTVector& cnt_list)
 	{
+		QFileInfoList ret;
+
 		typedef SizeTVector::const_iterator It;
 
 		for (It it = cnt_list.begin();
@@ -93,19 +94,27 @@ namespace test
 									  + QString::number (i)
 									  + "."
 									  + QString::number (index);
+				ret << fname;
 
 				QFile current_file (fname);
-				QVERIFY2 (current_file.open (kDefaultOpenMode),
-						  QString (kMkFileErrorMess + fname).toAscii().constData());
-				QVERIFY (current_file.write (QByteArray (kDefaultFileSz, '0')) > 0);
+				current_file.open (kDefaultOpenMode);
+				current_file.write (QByteArray (kDefaultFileSz, '0'));
 			}
 		}
+
+		return ret;
 	}
 
-	void createTestSubdirs (const QString& path, size_t subdirs_cnt)
+	QFileInfoList createTestSubdirs (const QString& path, size_t subdirs_cnt)
 	{
+		QFileInfoList ret;
+
 		for (size_t i = 0; i < subdirs_cnt; ++i) {
-			mkPathInTemp (path + "/" + QString::number (i));
+			const QString subdir = path + "/" + QString::number (i);
+			mkPathInTemp (subdir);
+			ret << subdir;
 		}
+
+		return ret;
 	}
 }
