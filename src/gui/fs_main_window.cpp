@@ -90,7 +90,7 @@ namespace gui
 
 	void MainWindow::handleAboutAction()
 	{
-		QMessageBox::about (this, "About", QString (kAppName) + " " + QString (kCopyright));
+		QMessageBox::about (this, "About", QString (tr (kAppName)) + " " + QString (tr (kCopyright)));
 	}
 
 	void MainWindow::handleAboutQtAction()

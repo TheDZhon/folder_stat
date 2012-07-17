@@ -33,8 +33,8 @@ using namespace core;
 
 namespace
 {
-	const char* kAppName = "Folder Stat GUI";
-	const char* kOrgName = "PrefixInc";
+	const QString kAppName = "Folder Stat GUI";
+	const QString kOrgName = "PrefixInc";
 }
 
 namespace gui
@@ -46,13 +46,44 @@ namespace gui
 	{
 		ui.setupUi (this);
 
-		connectUi();
 		loadState();
+		initSettings();
+		connectUi();
 	}
 
 	SettingsDialog::~SettingsDialog()
 	{
 		saveState();
+	}
+
+	void SettingsDialog::loadState()
+	{
+		QSettings sets (kOrgName, kAppName);
+
+		sets.beginGroup ("settings");
+
+		ui.exitConfirmationCheckBox->setChecked (sets.value ("exit_confirm", true).toBool());
+		ui.trayIconCheckBox->setChecked (sets.value ("tray_icon", true).toBool());
+		ui.allowMinimizeToTrayCheckBox->setChecked (sets.value ("allow_min_to_tray", true).toBool());
+		ui.showNotificationsCheckBox->setChecked (sets.value ("notifications", true).toBool());
+		ui.notificationTimeoutSpinBox->setValue (sets.value ("notify_timeout", 10).toInt());
+		ui.cachePolicyComboBox->setCurrentIndex (sets.value ("default_policy").toInt());
+		ui.cacheMaxItemsSpinBox->setValue (sets.value ("max_cache_items", 10000).toInt());
+	}
+
+	void SettingsDialog::saveState() const
+	{
+		QSettings sets (kOrgName, kAppName);
+
+		sets.beginGroup ("settings");
+
+		sets.setValue ("exit_confirm", settings_data_.exit_confirmation_);
+		sets.setValue ("tray_icon", settings_data_.tray_icon_);
+		sets.setValue ("allow_min_to_tray", settings_data_.allow_minimize_to_tray_);
+		sets.setValue ("notifications", settings_data_.show_notifications_);
+		sets.setValue ("notify_timeout", static_cast<int> (settings_data_.notification_timeout_));
+		sets.setValue ("default_policy", settings_data_.default_policy_);
+		sets.setValue ("max_cache_items", static_cast<int> (settings_data_.max_cache_items_));
 	}
 
 	void SettingsDialog::handleGeneral()
@@ -102,33 +133,10 @@ namespace gui
 				 SLOT (handleCache()));
 	}
 
-	void SettingsDialog::loadState()
+	void SettingsDialog::initSettings()
 	{
-		QSettings sets (kOrgName, kAppName);
-
-		sets.beginGroup ("settings");
-
-		ui.exitConfirmationCheckBox->setChecked(sets.value ("exit_confirm", true).toBool());
-		ui.trayIconCheckBox->setChecked (sets.value ("tray_icon", true).toBool());
-		ui.allowMinimizeToTrayCheckBox->setChecked (sets.value ("allow_min_to_tray", true).toBool());
-		ui.showNotificationsCheckBox->setChecked (sets.value ("notifications", true).toBool());
-		ui.notificationTimeoutSpinBox->setValue (sets.value ("notify_timeout", 10).toInt());
-		ui.cachePolicyComboBox->setCurrentIndex (sets.value ("default_policy").toInt());
-		ui.cacheMaxItemsSpinBox->setValue (sets.value ("max_cache_items", 10000).toInt());
-	}
-
-	void SettingsDialog::saveState() const
-	{
-		QSettings sets (kOrgName, kAppName);
-
-		sets.beginGroup ("settings");
-
-		sets.setValue ("exit_confirm", settings_data_.exit_confirmation_);
-		sets.setValue ("tray_icon", settings_data_.tray_icon_);
-		sets.setValue ("allow_min_to_tray", settings_data_.allow_minimize_to_tray_);
-		sets.setValue ("notifications", settings_data_.show_notifications_);
-		sets.setValue ("notify_timeout", static_cast<int>(settings_data_.notification_timeout_));
-		sets.setValue ("default_policy", settings_data_.default_policy_);
-		sets.setValue ("max_cache_items", static_cast<int>(settings_data_.max_cache_items_));
+		handleGeneral();
+		handleTray();
+		handleCache();
 	}
 }
