@@ -41,7 +41,7 @@ namespace core
 
 	void StatData::append (const StatData& other)
 	{
-		ExtRecordsMap& otherFilesMap = other.extRecords();
+		const ExtRecordsMap& otherFilesMap = other.extRecords();
 		typedef ExtRecordsMap::const_iterator It;
 
 		for (It it = otherFilesMap.begin();
