@@ -37,6 +37,7 @@
 #include <QObject>
 #include <QtCore>
 #include <QSharedPointer>
+#include <QAtomicInt>
 
 namespace async = QtConcurrent;
 
@@ -47,27 +48,24 @@ namespace core
 		Q_OBJECT
 	public:
 		Collector (QObject* parent = NULL);
-		virtual ~Collector () {};
+		virtual ~Collector ();
 	public slots:
 		inline void collect (const QString& path, bool use_cache = true) {
 			async::run (this, &Collector::collectImpl, path, use_cache);
 		}
-		inline void pause (const QString& path) {
-			async::run (this, &Collector::pauseImpl, path);
+		inline void cancel () {
+			terminator_ = kTerminate; // lightweight
 		}
-		inline void resume (const QString & path) {
-			async::run (this, &Collector::resumeImpl, path);
-		}
-		inline void cancel (const QString& path) {
-			async::run (this, &Collector::cancelImpl, path);
+		inline void setCacheSize (size_t sz) {
+			async::run (this, &Collector::setCacheSizeImpl, sz);
 		}
 		inline void clearCache (const QString& path = QString()) {
 			async::run (this, &Collector::clearCacheImpl, path);
 		}
 	signals:
 		void error (const QString&, const QString&) const;
-		void dirsCollected (const QString&, const QFileInfoList&) const; 
-		void finished (const QString&, const StatDataPtr&) const;
+		void dirsCollected (const QString&, const QFileInfoList&) const;
+		void finished (const QString&, const core::StatDataPtr&) const;
 	private:
 		struct mapper;
 		struct reducer;
@@ -75,19 +73,25 @@ namespace core
 		friend struct mapper;
 		friend struct reducer;
 
+		enum {
+			kTerminate,
+			kWork
+		};
+
 		Q_DISABLE_COPY (Collector);
 
 		void collectImpl (const QString& path, bool use_cache);
-		StatDataPtr collectImplAux (const QFileInfo & pinfo, bool use_cache);
-		void pauseImpl (const QString& path);
-		void resumeImpl (const QString& path);
-		void cancelImpl (const QString& path);
+		void setCacheSizeImpl (size_t sz);
 		void clearCacheImpl (const QString& path);
 
-		QFileInfoList getSubdirs (const QFileInfo & f) const;
-		QFileInfoList getFiles (const QFileInfo & f) const;
+		StatDataPtr collectImplAux (const QFileInfo& pinfo, bool use_cache);
+
+		QFileInfoList getSubdirs (const QFileInfo& f) const;
+		QFileInfoList getFiles (const QFileInfo& f) const;
 
 		Cacher cacher_;
+
+		QAtomicInt terminator_;
 	};
 }
 

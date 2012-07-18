@@ -32,8 +32,9 @@
 
 namespace
 {
-	const QString kNotExists = QObject::tr ("Given path is not exists");
-	const QString kNotADir = QObject::tr ("Given path is not a directory");
+	const QString kNotExists = QObject::tr ("invalid path");
+	const QString kNotADir = QObject::tr ("not a directory");
+	const QString kCanceled = QObject::tr ("canceled");
 
 	const QDir::Filters kCommonFilters = QDir::Readable
 										 | QDir::Hidden
@@ -66,11 +67,11 @@ namespace core
 	struct Collector::reducer :
 			std::binary_function<StatDataPtr&, const StatDataPtr&, void> {
 
-		reducer (StatDataPtr acc) : acc_ (acc) { }
+		reducer (StatDataPtr acc) : acc_ (acc) { Q_ASSERT (!acc.isNull()); }
 
 		void operator () (StatDataPtr& acc, const StatDataPtr& cur) {
-			acc = acc_;
-			acc->append (*cur);
+			Q_ASSERT (!cur.isNull());
+			acc_->append (*cur);
 		}
 
 		StatDataPtr acc_;
@@ -78,11 +79,20 @@ namespace core
 
 	Collector::Collector (QObject* parent /*= NULL*/) :
 		QObject (parent),
-		cacher_()
+		cacher_(),
+		terminator_ (kWork)
 	{}
+
+	Collector::~Collector ()
+	{
+		cancel();
+		QThreadPool::globalInstance()->waitForDone();
+	}
 
 	void Collector::collectImpl (const QString& path, bool use_cache)
 	{
+		terminator_ = kWork;
+
 		const QString& canonPath = QFileInfo (path).canonicalFilePath();
 		const QFileInfo pathInfo (canonPath);
 
@@ -91,7 +101,23 @@ namespace core
 
 		StatDataPtr full_answer = collectImplAux (pathInfo, use_cache);
 
-		emit finished (path, full_answer);
+		if (terminator_ == kTerminate) {
+			emit error (path, kCanceled);
+			cacher_.clear();
+		} else {
+			emit finished (path, full_answer);
+		}
+	}
+
+	void Collector::setCacheSizeImpl (size_t sz)
+	{
+		cacher_.setMaxSize (sz);
+	}
+
+	void Collector::clearCacheImpl (const QString& path)
+	{
+		if (path.isNull()) { cacher_.clear (); return; }
+		cacher_.invalidate (path);
 	}
 
 	StatDataPtr Collector::collectImplAux (const QFileInfo& pinfo, bool use_cache)
@@ -100,7 +126,7 @@ namespace core
 
 		Q_ASSERT (pinfo.isDir());
 
-		const QString& cpath = pinfo.canonicalPath();
+		const QString& cpath = pinfo.canonicalFilePath();
 
 		if (use_cache) {
 			const StatDataPtr& from_cache = cacher_.get (cpath);
@@ -115,37 +141,17 @@ namespace core
 		const QFileInfoList& subdirs = getSubdirs (pinfo);
 		emit dirsCollected (pinfo.path(), subdirs);
 
-		QFileInfoList& files = getFiles (pinfo);
+		const QFileInfoList& files = getFiles (pinfo);
 
 		answer->setSubdirs (subdirs);
 		answer->collectFilesExts (files);
 
-		async::mappedReduced<StatDataPtr> (subdirs, mapper (this, use_cache), reducer (answer)).waitForFinished();
-
-		if (use_cache) { cacher_.store (pinfo.canonicalPath(), answer); }
+		if (terminator_ != kTerminate) {
+			async::blockingMappedReduced<StatDataPtr> (subdirs, mapper (this, use_cache), reducer (answer));
+			if (use_cache) { cacher_.store (pinfo.canonicalFilePath(), answer); }
+		}
 
 		return answer;
-	}
-
-	void Collector::pauseImpl (const QString& path)
-	{
-
-	}
-
-	void Collector::resumeImpl (const QString& path)
-	{
-
-	}
-
-	void Collector::cancelImpl (const QString& path)
-	{
-
-	}
-
-	void Collector::clearCacheImpl (const QString& path)
-	{
-		if (path.isNull()) { cacher_.clear (); return; }
-		cacher_.invalidate (path);
 	}
 
 	QFileInfoList Collector::getSubdirs (const QFileInfo& f) const
