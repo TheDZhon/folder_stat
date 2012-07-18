@@ -71,7 +71,7 @@ namespace core
 
 		void operator () (StatDataPtr& acc, const StatDataPtr& cur) {
 			Q_ASSERT (!cur.isNull());
-			acc_->append (*cur);
+			acc_->appendOther (*cur);
 		}
 
 		StatDataPtr acc_;

@@ -45,6 +45,8 @@ namespace test
 		void testGetAndStore_data () const { prepareData(); }
 		void testGetAndStore ();
 
+		void testSetMaxSize ();
+
 		void testInvalidate_data () const { prepareData(); }
 		void testInvalidate ();
 

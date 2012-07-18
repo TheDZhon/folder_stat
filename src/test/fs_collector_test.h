@@ -44,9 +44,6 @@ namespace test {
 		void testCollect_data () const { prepareData(); }
 		void testCollect ();
 
-		void testPause_data () const { prepareData(); }
-		void testPause ();
-
 		void testCancel_data () const { prepareData(); }
 		void testCancel ();
 

@@ -36,10 +36,10 @@ namespace core
 {
 	StatData::ExtensionRecord::ExtensionRecord () :
 		count_ (kULLZero),
-		all_size_b_ (kULLZero)
+		total_size_ (kULLZero)
 	{}
 
-	void StatData::append (const StatData& other)
+	void StatData::appendOther (const StatData& other)
 	{
 		const ExtRecordsMap& otherFilesMap = other.extRecords();
 		typedef ExtRecordsMap::const_iterator It;
@@ -52,7 +52,7 @@ namespace core
 			ExtensionRecord& record = ext_records_[ext];
 
 			record.count_ += it->count_;
-			record.all_size_b_ += it->all_size_b_;
+			record.total_size_ += it->total_size_;
 		}
 	}
 
@@ -62,18 +62,25 @@ namespace core
 
 		for (It it = l.begin(); it != l.end();
 			 ++it)
-		{ incExtCnt (it->completeSuffix(), it->size());	}
+		{
+			Q_ASSERT (it->isFile());
+			incExtCnt (it->suffix(), it->size());	
+		}
 	}
 
 	void StatData::incExtCnt (const QString& ext, quint64 sz)
 	{
 		ExtensionRecord& record = ext_records_[ext];
 		++record.count_;
-		record.all_size_b_ += sz;
+		record.total_size_ += sz;
+	}
+
+	bool StatData::operator== (const StatData & other) const {
+		return (subdirs_ == other.subdirs()) && (ext_records_ == other.ext_records_);
 	}
 
 	bool operator== (const StatData::ExtensionRecord& l, const StatData::ExtensionRecord& r)
 	{
-		return (l.count_ == r.count_) && (l.all_size_b_ == r.all_size_b_);
+		return (l.count_ == r.count_) && (l.total_size_ == r.total_size_);
 	}
 }

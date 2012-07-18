@@ -40,9 +40,11 @@ using namespace core;
 namespace
 {
 	const QFileInfo kRootPath = QDir::rootPath();
-	const size_t kRandDiv = 10;
+	const QString kTestFolderName = QString ("statdatatest");
 
-	const test::range_rand pos_rand_f = test::range_rand(1, kRandDiv);
+	const size_t kTestFilesNumber = 100;
+
+	const test::iota_emulator_generator<size_t> iota_gen(0, 1);
 }
 
 namespace test
@@ -71,49 +73,76 @@ namespace test
 		QCOMPARE (dirs_from_sdata, dirs);
 	}
 
-	void StatDataTest::testIncExtCnt_data() const
-	{
-		QTest::addColumn<StatData::ExtRecordsMap> ("expected_map");
-
-		StatData::ExtRecordsMap one_item_map;
-		StatData::ExtensionRecord one_item;
-		one_item.count_ = 10;
-		one_item_map.insert ("exe", one_item);
-
-		StatData::ExtRecordsMap common_map;
-		const size_t items_cnt = pos_rand_f ();
-		for (size_t i = 0; i < items_cnt; ++i) {
-			StatData::ExtensionRecord current_item;
-			current_item.count_ = pos_rand_f ();
-			common_map.insert (QString::number (i), current_item);
-		}
-
-		QTest::newRow ("empty") << StatData::ExtRecordsMap();
-		QTest::newRow ("one_item") << one_item_map;
-		QTest::newRow ("common") << common_map;
-	}
-
-	void StatDataTest::testIncExtCnt()
+	void StatDataTest::testAppendOther()
 	{
 		typedef StatData::ExtRecordsMap::const_iterator It;
 
-		QFETCH (StatData::ExtRecordsMap, expected_map);
+		QFETCH (QFileInfoList, expected_data);
 
-		StatData stat_data;
+		StatData l;
+		StatData r;
 
-		for (It it = expected_map.constBegin();
-			 it != expected_map.constEnd();
-			 ++it) {
-			for (size_t i = 0; i < it->count_; ++i) {
-				stat_data.incExtCnt (it.key(), 0);
-			}
-		}
+		l.collectFilesExts(expected_data);
+		r.collectFilesExts(expected_data);
 
-		QCOMPARE (stat_data.extRecords(), expected_map);
+		QCOMPARE (l, r);
+
+		l.appendOther(r);
+
+		const StatData::ExtRecordsMap & l_rec_map = l.extRecords();
+		const StatData::ExtRecordsMap & r_rec_map = r.extRecords();
+		for (It it = l_rec_map.begin();
+			it != l_rec_map.end();
+			++it)
+		{
+			QCOMPARE (it->count_, r_rec_map[it.key()].count_ * 2);
+			QCOMPARE (it->total_size_, r_rec_map[it.key()].total_size_ * 2);
+		}				
 	}
 
-	void StatDataTest::initTestCase() const
+	void StatDataTest::testCollectFilesExts() 
+	{
+		typedef StatData::ExtRecordsMap::const_iterator It;
+
+		QFETCH (QFileInfoList, expected_data);
+
+		StatData stat_obj;
+		
+		stat_obj.collectFilesExts(expected_data);
+		const StatData::ExtRecordsMap & rec_map = stat_obj.extRecords();
+
+		for (It it = rec_map.begin();
+			it != rec_map.end();
+			++it)
+		{
+			QCOMPARE (it->count_, static_cast<quint64>(it.key().toInt()));
+			QCOMPARE (it->total_size_, it->count_ * kDefaultFileSz);
+		}
+	}
+
+	void StatDataTest::initTestCase()
 	{
 		qsrand (time (NULL));
+
+		mkPathInTemp(kTestFolderName);
+
+		SizeTVector v(kTestFilesNumber);
+		std::generate(v.begin(), v.end(), iota_gen);
+
+		test_files_ = createTestFiles(kTestFolderName, v);
+	}
+
+	void StatDataTest::cleanupTestCase()
+	{
+		rmPathInTempRecursive(kTestFolderName);
+	}
+
+	void StatDataTest::prepareFiles() const
+	{
+		QTest::addColumn<QFileInfoList>("expected_data");
+
+		QTest::newRow("empty") << QFileInfoList();
+		QTest::newRow("one") << (QFileInfoList() << test_files_.at(0));
+		QTest::newRow("all") << test_files_;
 	}
 }

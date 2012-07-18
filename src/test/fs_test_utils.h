@@ -52,8 +52,8 @@ namespace test
 	QFileInfoList createTestFiles (const QString& path, const SizeTVector& cnt_list);
 	QFileInfoList createTestSubdirs (const QString& path, size_t subdirs_cnt);
 
-	struct range_rand {
-		range_rand (size_t min, size_t max) :
+	struct range_rand_generator {
+		range_rand_generator (size_t min, size_t max) :
 			min_ (min),
 			max_ (max)
 		{}
@@ -64,6 +64,22 @@ namespace test
 
 		size_t min_;
 		size_t max_;
+	};
+
+	template<typename T>
+	struct iota_emulator_generator {
+		iota_emulator_generator (T fst, T inc): 
+			fst_(fst),
+			inc_(inc) {}
+
+		inline T operator () () {
+			T old = fst_;
+			fst_ += inc_;
+			return old;
+		}		
+		
+		T fst_;
+		T inc_;
 	};
 }
 

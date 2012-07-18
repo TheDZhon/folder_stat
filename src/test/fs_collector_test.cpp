@@ -56,27 +56,12 @@ namespace
 								  << kCommonPath;
 
 	const size_t kRandDiv = 10;
-	const test::range_rand pos_rand_f = test::range_rand (1, kRandDiv);
+	const test::range_rand_generator pos_rand_f = test::range_rand_generator (1, kRandDiv);
 }
 
 namespace test
 {
-	struct stat_data_files_fill {
-		stat_data_files_fill (StatDataPtr stat_data) : stat_data_ (stat_data) { }
-
-		inline void operator () (const QFileInfo& i) {
-			stat_data_->incExtCnt (i.completeSuffix(), kDefaultFileSz);
-		}
-
-		StatDataPtr stat_data_;
-	};
-
 	void CollectorTest::testCollect()
-	{
-
-	}
-
-	void CollectorTest::testPause()
 	{
 
 	}
@@ -107,8 +92,7 @@ namespace test
 		expected_stats_[kCleanPath] = StatDataPtr (new StatData);
 
 		StatDataPtr single_stat_data_ptr (new StatData);
-		const QFileInfo& singleFileInfo = *single_file_info_list.begin();
-		single_stat_data_ptr->incExtCnt (singleFileInfo.completeSuffix(), kDefaultFileSz);
+		single_stat_data_ptr->collectFilesExts(single_file_info_list);
 		expected_stats_[kSingleFilePath] = StatDataPtr (single_stat_data_ptr);
 
 		StatDataPtr nested_clean_stat (new StatData);
@@ -116,9 +100,8 @@ namespace test
 		expected_stats_[kNestedCleanPath] = nested_clean_stat;
 
 		StatDataPtr one_level_stat (new StatData);
-		stat_data_files_fill filler (one_level_stat);
 		one_level_stat->setSubdirs (one_level_dirs);
-		std::for_each (one_level_files.begin(), one_level_files.end(), filler);
+		one_level_stat->collectFilesExts(one_level_files);
 		expected_stats_[kOneLevelPath] = one_level_stat;
 	}
 

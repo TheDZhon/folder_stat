@@ -44,10 +44,18 @@ namespace test {
 		void testSetAndGetSubdirs_data() const;
 		void testSetAndGetSubdirs ();
 
-		void testIncExtCnt_data () const;
-		void testIncExtCnt ();
+		void testAppendOther_data () const { prepareFiles(); }
+		void testAppendOther ();
 
-		void initTestCase() const;
+		void testCollectFilesExts_data () const { prepareFiles(); }
+		void testCollectFilesExts ();
+		
+		void initTestCase();
+		void cleanupTestCase ();
+	private:
+		void prepareFiles() const;
+
+		QFileInfoList test_files_;
 	};
 }
 

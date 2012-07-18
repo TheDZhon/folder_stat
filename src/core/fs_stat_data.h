@@ -50,7 +50,7 @@ namespace core
 			ExtensionRecord();
 
 			quint64 count_;
-			quint64 all_size_b_;
+			quint64 total_size_;
 		};
 
 		typedef QHash<QString, ExtensionRecord> ExtRecordsMap;
@@ -58,22 +58,25 @@ namespace core
 		StatData() {}
 		~StatData() {}
 
-		void append (const StatData&);
+		void appendOther (const StatData&);
 
 		void setSubdirs (const QFileInfoList & subdirs) { subdirs_ = subdirs; }
 		QFileInfoList subdirs () const { return subdirs_; }
 
 		void collectFilesExts (const QFileInfoList&);
-		void incExtCnt (const QString & ext, quint64 sz);
 		ExtRecordsMap extRecords () const { return ext_records_; }
+
+		bool operator==(const StatData & other) const;
 	private:
 		Q_DISABLE_COPY (StatData);
+
+		void incExtCnt (const QString & ext, quint64 sz);
 
 		QFileInfoList subdirs_;
 		QHash<QString, ExtensionRecord> ext_records_;
 	};
 
-	bool operator==(const StatData::ExtensionRecord&, const StatData::ExtensionRecord&);
+	bool operator==(const StatData::ExtensionRecord&, const StatData::ExtensionRecord&);	
 }
 
 Q_DECLARE_METATYPE (core::StatDataPtr);
