@@ -34,7 +34,7 @@
 
 #include "fs_stat_data.h"
 
-#include <QHash>
+#include <QCache>
 #include <QReadWriteLock>
 
 namespace core
@@ -42,17 +42,17 @@ namespace core
 	class Cacher
 	{
 	public:
-		Cacher ();
+		Cacher (size_t init_sz = 10000);
 		~Cacher () {}
 
 		StatDataPtr get (const QString& path) const;
 		void store (const QString& path, const StatDataPtr& stat_data);
 
-		void reserve (size_t num);
+		void setMaxSize (size_t num);
 		void invalidate (const QString& path);
 		void clear ();
 	private:
-		typedef QHash<QString, StatDataPtr> StatDataCache;
+		typedef QCache<QString, StatDataPtr> StatDataCache;
 
 		Q_DISABLE_COPY (Cacher);
 
