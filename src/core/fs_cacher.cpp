@@ -35,28 +35,26 @@ namespace core
 	Cacher::Cacher (size_t init_sz) :
 		cache_ (init_sz),
 		lock_()
-	{
-
-	}
+	{}
 
 	core::StatDataPtr Cacher::get (const QString& path) const
 	{
 		QReadLocker _ (&lock_);
-		const StatDataPtr * cached = cache_.object(path);
+		const StatDataPtr* cached = cache_.object (path);
 		return cached ? *cached : StatDataPtr();
 	}
 
 	void Cacher::store (const QString& path, const StatDataPtr& stat_data)
 	{
 		QWriteLocker _ (&lock_);
-		StatDataPtr * new_item = new StatDataPtr(stat_data);
+		StatDataPtr* new_item = new StatDataPtr (stat_data);
 		cache_.insert (path, new_item);
 	}
 
 	void Cacher::setMaxSize (size_t num)
 	{
 		QWriteLocker _ (&lock_);
-		cache_.setMaxCost(num);
+		cache_.setMaxCost (num);
 	}
 
 	void Cacher::invalidate (const QString& path)
