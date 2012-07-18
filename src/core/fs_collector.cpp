@@ -51,17 +51,16 @@ namespace core
 	struct Collector::mapper:
 			std::unary_function<const QFileInfo&, StatDataPtr> {
 
-		mapper (Collector* c,
-				bool use_cache) :
-			collector_ (c),
-			use_cache_ (use_cache) {}
+		mapper (Collector* c) :
+			collector_ (c) { Q_ASSERT (c); }
 
 		StatDataPtr operator() (const QFileInfo& finfo) {
-			return collector_->collectImplAux (finfo, use_cache_);
+			Q_ASSERT (finfo.isDir());
+
+			return collector_->collectImplAux (finfo);
 		}
 
 		Collector* collector_;
-		bool use_cache_;
 	};
 
 	struct Collector::reducer :
@@ -79,6 +78,7 @@ namespace core
 
 	Collector::Collector (QObject* parent /*= NULL*/) :
 		QObject (parent),
+		cache_enabled_(),
 		cacher_(),
 		terminator_ (kWork)
 	{}
@@ -89,7 +89,7 @@ namespace core
 		QThreadPool::globalInstance()->waitForDone();
 	}
 
-	void Collector::collectImpl (const QString& path, bool use_cache)
+	void Collector::collectImpl (const QString& path)
 	{
 		terminator_ = kWork;
 
@@ -99,7 +99,7 @@ namespace core
 		if (!pathInfo.exists()) { emit error (path, kNotExists); return; }
 		if (!pathInfo.isDir()) { emit error (path, kNotADir); return; }
 
-		StatDataPtr full_answer = collectImplAux (pathInfo, use_cache);
+		StatDataPtr full_answer = collectImplAux (pathInfo);
 
 		if (terminator_ == kTerminate) {
 			emit error (path, kCanceled);
@@ -109,18 +109,7 @@ namespace core
 		}
 	}
 
-	void Collector::setCacheSizeImpl (size_t sz)
-	{
-		cacher_.setMaxSize (sz);
-	}
-
-	void Collector::clearCacheImpl (const QString& path)
-	{
-		if (path.isNull()) { cacher_.clear (); return; }
-		cacher_.invalidate (path);
-	}
-
-	StatDataPtr Collector::collectImplAux (const QFileInfo& pinfo, bool use_cache)
+	StatDataPtr Collector::collectImplAux (const QFileInfo& pinfo)
 	{
 		typedef QFileInfoList::iterator It;
 
@@ -128,7 +117,7 @@ namespace core
 
 		const QString& cpath = pinfo.canonicalFilePath();
 
-		if (use_cache) {
+		if (cache_enabled_) {
 			const StatDataPtr& from_cache = cacher_.get (cpath);
 			if (!from_cache.isNull()) {
 				emit dirsCollected (pinfo.path(), from_cache->subdirs());
@@ -147,8 +136,8 @@ namespace core
 		answer->collectFilesExts (files);
 
 		if (terminator_ != kTerminate) {
-			async::blockingMappedReduced<StatDataPtr> (subdirs, mapper (this, use_cache), reducer (answer));
-			if (use_cache) { cacher_.store (pinfo.canonicalFilePath(), answer); }
+			async::blockingMappedReduced<StatDataPtr> (subdirs, mapper (this), reducer (answer));
+			if (cache_enabled_) { cacher_.store (pinfo.canonicalFilePath(), answer); }
 		}
 
 		return answer;

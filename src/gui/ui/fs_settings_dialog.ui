@@ -115,12 +115,15 @@
        <item row="2" column="0">
         <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>Maximum items [0: unlimited]:</string>
+          <string>Maximum items:</string>
          </property>
         </widget>
        </item>
        <item row="2" column="1">
         <widget class="QSpinBox" name="cacheMaxItemsSpinBox">
+         <property name="minimum">
+          <number>1</number>
+         </property>
          <property name="maximum">
           <number>1000000</number>
          </property>

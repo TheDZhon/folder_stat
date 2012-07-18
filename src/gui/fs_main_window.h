@@ -36,6 +36,7 @@
 
 #include "gui/fs_settings_dialog.h"
 #include "core/fs_collector.h"
+#include "gui/fs_stat_table_model.h"
 
 #include <QtGui/QMainWindow>
 #include <QSystemTrayIcon>
@@ -84,6 +85,8 @@ namespace gui
 		SettingsData settings_data_;
 
 		core::Collector collector_;
+
+		StatTableModel stat_model_;
 	};
 }
 

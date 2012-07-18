@@ -49,7 +49,8 @@ namespace gui
 		  tray_icon_(),
 		  settings_dialog_(),
 		  settings_data_ (settings_dialog_.settings()),
-		  collector_()
+		  collector_(),
+		  stat_model_()
 	{
 		ui.setupUi (this);
 
@@ -157,6 +158,8 @@ namespace gui
 		m->addSeparator();
 		m->addAction (ui.quitAction);
 
+		ui.tableView->setModel (&stat_model_);
+
 		processSettingsData();
 	}
 
@@ -196,6 +199,10 @@ namespace gui
 		connect (&collector_,
 				 SIGNAL (finished (const QString&, const core::StatDataPtr&)),
 				 SLOT (handleFinished (const QString, const core::StatDataPtr&)));
+		connect (&collector_,
+				 SIGNAL (finished (const QString&, const core::StatDataPtr&)),
+				 &stat_model_,
+				 SLOT (handleNewData (const QString, const core::StatDataPtr&)));
 
 		connect (ui.cancelCollectAction,
 				 SIGNAL (triggered()),
@@ -269,5 +276,8 @@ namespace gui
 		tray_icon_.setVisible (settings_data_.show_tray_icon_);
 		ui.hideWindowAction->setEnabled (settings_data_.allow_minimize_to_tray_);
 		ui.restoreWindowAction->setEnabled (settings_data_.allow_minimize_to_tray_);
+
+		collector_.setCacheSize (settings_data_.max_cache_items_);
+		collector_.setCacheEnabled (settings_data_.use_cache_);
 	}
 }

@@ -25,77 +25,37 @@
 //    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
-#ifndef FS_COLLECTOR_H__
-#define FS_COLLECTOR_H__
+#ifndef FS_STAT_TABLE_MODEL_H__
+#define FS_STAT_TABLE_MODEL_H__
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
 #pragma once
 #endif
 
-#include "fs_cacher.h"
+#include "core/fs_stat_data.h"
 
-#include <QObject>
-#include <QtCore>
-#include <QSharedPointer>
-#include <QAtomicInt>
+#include <QAbstractTableModel>
 
-namespace async = QtConcurrent;
-
-namespace core
-{
-	class Collector: public QObject
+namespace gui {
+	class StatTableModel:
+		public QAbstractTableModel
 	{
 		Q_OBJECT
 	public:
-		Collector (QObject* parent = NULL);
-		virtual ~Collector ();
+		StatTableModel (QObject * parent = 0);
+		virtual ~StatTableModel();
+
+		virtual int rowCount (const QModelIndex & parent) const;
+		virtual int columnCount (const QModelIndex & parent) const;
+		virtual QVariant data (const QModelIndex& index, int role) const;
+
+		virtual QVariant headerData (int section, Qt::Orientation, int role) const;
 	public slots:
-		inline void collect (const QString& path) {
-			async::run (this, &Collector::collectImpl, path);
-		}
-		inline void cancel () {
-			terminator_ = kTerminate; // lightweight
-		}
-		inline void setCacheEnabled (bool on = true) {
-			cache_enabled_ = on;
-			if (!on) { clearCache(); }
-		}
-		inline void setCacheSize (size_t sz) {
-			async::run (&cacher_, &Cacher::setMaxSize, sz);
-		}
-		inline void clearCache () {
-			async::run (&cacher_, &Cacher::clear);
-		}
-	signals:
-		void error (const QString&, const QString&) const;
-		void dirsCollected (const QString&, const QFileInfoList&) const;
-		void finished (const QString&, const core::StatDataPtr&) const;
+		void handleNewData (const QString& path, const core::StatDataPtr& data);
 	private:
-		struct mapper;
-		struct reducer;
-
-		friend struct mapper;
-		friend struct reducer;
-
-		enum {
-			kTerminate,
-			kWork
-		};
-
-		Q_DISABLE_COPY (Collector);
-
-		void collectImpl (const QString& path);
-		StatDataPtr collectImplAux (const QFileInfo& pinfo);
-
-		QFileInfoList getSubdirs (const QFileInfo& f) const;
-		QFileInfoList getFiles (const QFileInfo& f) const;
-
-		bool cache_enabled_;
-		Cacher cacher_;
-
-		QAtomicInt terminator_;
+		QString path_;
+		core::StatData::ExtRecordsMap data_;
 	};
 }
 
-#endif // FS_COLLECTOR_H__
-
+#endif // FS_STAT_TABLE_MODEL_H__

@@ -25,77 +25,88 @@
 //    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
-#ifndef FS_COLLECTOR_H__
-#define FS_COLLECTOR_H__
+#include "fs_stat_table_model.h"
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
-#pragma once
-#endif
+#include <algorithm>
 
-#include "fs_cacher.h"
-
-#include <QObject>
-#include <QtCore>
-#include <QSharedPointer>
-#include <QAtomicInt>
-
-namespace async = QtConcurrent;
-
-namespace core
+namespace
 {
-	class Collector: public QObject
-	{
-		Q_OBJECT
-	public:
-		Collector (QObject* parent = NULL);
-		virtual ~Collector ();
-	public slots:
-		inline void collect (const QString& path) {
-			async::run (this, &Collector::collectImpl, path);
-		}
-		inline void cancel () {
-			terminator_ = kTerminate; // lightweight
-		}
-		inline void setCacheEnabled (bool on = true) {
-			cache_enabled_ = on;
-			if (!on) { clearCache(); }
-		}
-		inline void setCacheSize (size_t sz) {
-			async::run (&cacher_, &Cacher::setMaxSize, sz);
-		}
-		inline void clearCache () {
-			async::run (&cacher_, &Cacher::clear);
-		}
-	signals:
-		void error (const QString&, const QString&) const;
-		void dirsCollected (const QString&, const QFileInfoList&) const;
-		void finished (const QString&, const core::StatDataPtr&) const;
-	private:
-		struct mapper;
-		struct reducer;
+	enum Columns {
+		kExtension,
+		kCount,
+		kTotalSize,
+		kAvgSize,
 
-		friend struct mapper;
-		friend struct reducer;
-
-		enum {
-			kTerminate,
-			kWork
-		};
-
-		Q_DISABLE_COPY (Collector);
-
-		void collectImpl (const QString& path);
-		StatDataPtr collectImplAux (const QFileInfo& pinfo);
-
-		QFileInfoList getSubdirs (const QFileInfo& f) const;
-		QFileInfoList getFiles (const QFileInfo& f) const;
-
-		bool cache_enabled_;
-		Cacher cacher_;
-
-		QAtomicInt terminator_;
+		kColumnsCnt
 	};
 }
 
-#endif // FS_COLLECTOR_H__
+namespace gui
+{
+	StatTableModel::StatTableModel (QObject* parent) :
+		QAbstractTableModel (parent),
+		path_(),
+		data_()
+	{
 
+	}
+
+	StatTableModel::~StatTableModel() {}
+
+	int StatTableModel::rowCount (const QModelIndex& parent) const
+	{
+		return data_.size();
+	}
+
+	int StatTableModel::columnCount (const QModelIndex& parent) const
+	{
+		return kColumnsCnt;
+	}
+
+	QVariant StatTableModel::data (const QModelIndex& index, int role) const
+	{
+		typedef core::StatData::ExtRecordsMap::const_iterator It;
+
+		if (role == Qt::DisplayRole) {
+			const size_t row = index.row();
+
+			Q_ASSERT (row < static_cast<size_t> (data_.size()));
+			Q_ASSERT (row >= 0);
+
+			It it = data_.begin();
+			std::advance (it, row);
+
+			const size_t col = index.column();
+
+			switch (col) {
+				case kExtension: return it.key();
+				case kCount: return it->count_;
+				case kTotalSize: return it->total_size_;
+				case kAvgSize: return (it->total_size_ / static_cast<double> (it->count_));
+			}
+		}
+
+		return QVariant();
+	}
+
+	QVariant StatTableModel::headerData (int section, Qt::Orientation o, int role) const
+	{
+		if (o == Qt::Horizontal) {
+			if (role == Qt::DisplayRole) {
+				return QString::number (section);
+			}
+		}
+
+		return QVariant();
+	}
+
+	void StatTableModel::handleNewData (const QString& path, const core::StatDataPtr& stat_data)
+	{
+		beginResetModel();
+
+		path_ = path;
+		data_ = stat_data->extRecords();
+
+		endResetModel();
+	}
+}
