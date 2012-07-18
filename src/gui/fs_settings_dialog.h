@@ -40,6 +40,18 @@
 
 namespace gui
 {
+	struct SettingsData {
+		bool exit_confirmation_;
+
+		bool show_tray_icon_;
+		bool allow_minimize_to_tray_;
+		bool show_notifications_;
+		size_t notification_timeout_;
+
+		bool use_cache_;
+		size_t max_cache_items_;
+	};
+
 	class SettingsDialog : public QDialog
 	{
 		Q_OBJECT
@@ -47,7 +59,7 @@ namespace gui
 		SettingsDialog (QWidget* parent = 0);
 		virtual ~SettingsDialog();
 
-		void setSettings (const SettingsData & s) { settings_data_ = s; }
+		void setSettings (const SettingsData& s) { settings_data_ = s; }
 		inline SettingsData settings () const { return settings_data_; }
 
 		void loadState ();

@@ -78,7 +78,7 @@ namespace gui
 		sets.beginGroup ("settings");
 
 		sets.setValue ("exit_confirm", settings_data_.exit_confirmation_);
-		sets.setValue ("tray_icon", settings_data_.tray_icon_);
+		sets.setValue ("tray_icon", settings_data_.show_tray_icon_);
 		sets.setValue ("allow_min_to_tray", settings_data_.allow_minimize_to_tray_);
 		sets.setValue ("notifications", settings_data_.show_notifications_);
 		sets.setValue ("notify_timeout", static_cast<int> (settings_data_.notification_timeout_));
@@ -93,7 +93,7 @@ namespace gui
 
 	void SettingsDialog::handleTray()
 	{
-		settings_data_.tray_icon_ = ui.trayIconCheckBox->isChecked ();
+		settings_data_.show_tray_icon_ = ui.trayIconCheckBox->isChecked ();
 		settings_data_.allow_minimize_to_tray_ = ui.allowMinimizeToTrayCheckBox->isChecked ();
 		settings_data_.show_notifications_ = ui.showNotificationsCheckBox->isChecked ();
 		settings_data_.notification_timeout_ = ui.notificationTimeoutSpinBox->value ();
