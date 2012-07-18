@@ -63,7 +63,23 @@ namespace test
 {
 	void CollectorTest::testCollect()
 	{
+		QFETCH (QString, path);
+		QFETCH (StatDataPtr, expected_stat_data);
 
+		QVERIFY (!expected_stat_data.isNull());
+
+		Collector collector;
+
+		connect (&collector, 
+			SIGNAL (finished (const QString&, const core::StatDataPtr&)),
+			SLOT (handleScanFinished(const QString&, const core::StatDataPtr&)));
+
+		collector.collect(QDir::tempPath() + "/" + path);
+		QVERIFY(waitForSignal(this, SIGNAL (scanFinished()), 10000));
+
+		QVERIFY (!current_stat_.isNull());
+
+		QCOMPARE (*current_stat_, *expected_stat_data);
 	}
 
 	void CollectorTest::testCancel()
@@ -75,6 +91,8 @@ namespace test
 	{
 		qsrand (time (NULL));
 
+		//
+
 		std::for_each (kAllPaths.begin(), kAllPaths.end(), &mkPathInTemp);
 		const QFileInfoList& single_file_info_list = createTestFiles (kSingleFilePath, SizeTVector() << 1);
 
@@ -83,11 +101,26 @@ namespace test
 
 		const size_t one_level_dirs_cnt = pos_rand_f ();
 		const size_t one_level_files_cnt = pos_rand_f ();
-		SizeTVector files_cnt_list (one_level_files_cnt);
-		std::generate (files_cnt_list.begin(), files_cnt_list.end(), pos_rand_f);
-
+		SizeTVector one_level_files_cnt_list (one_level_files_cnt);
+		std::generate (one_level_files_cnt_list.begin(), one_level_files_cnt_list.end(), pos_rand_f);
 		const QFileInfoList& one_level_dirs = createTestSubdirs (kOneLevelPath, one_level_dirs_cnt);
-		const QFileInfoList& one_level_files = createTestFiles (kOneLevelPath, files_cnt_list);
+		const QFileInfoList& one_level_files = createTestFiles (kOneLevelPath, one_level_files_cnt_list);
+
+		const size_t common_dirs_cnt = pos_rand_f ();
+		const size_t common_files_cnt_1 = pos_rand_f ();
+		const size_t common_files_cnt_2 = pos_rand_f ();
+		
+		SizeTVector common_files_cnt_list_1 (common_files_cnt_1);
+		SizeTVector common_files_cnt_list_2 (common_files_cnt_2);
+		
+		std::generate (common_files_cnt_list_1.begin(), common_files_cnt_list_1.end(), pos_rand_f);
+		std::generate (common_files_cnt_list_2.begin(), common_files_cnt_list_2.end(), pos_rand_f);
+
+		const QFileInfoList & common_level_dirs_1 = createTestSubdirs(kCommonPath, common_dirs_cnt);
+		const QFileInfoList & common_level_files_1 = createTestFiles(kCommonPath, common_files_cnt_list_1);
+		const QFileInfoList & common_level_files_2 = createTestFiles(kCommonPath + "/0", common_files_cnt_list_2);
+
+		//
 
 		expected_stats_[kCleanPath] = StatDataPtr (new StatData);
 
@@ -103,6 +136,12 @@ namespace test
 		one_level_stat->setSubdirs (one_level_dirs);
 		one_level_stat->collectFilesExts(one_level_files);
 		expected_stats_[kOneLevelPath] = one_level_stat;
+
+		StatDataPtr common_stat (new StatData);
+		common_stat->setSubdirs(common_level_dirs_1);
+		common_stat->collectFilesExts(common_level_files_1);
+		common_stat->collectFilesExts(common_level_files_2);
+		expected_stats_[kCommonPath] = common_stat;
 	}
 
 	void CollectorTest::cleanupTestCase()
@@ -110,13 +149,22 @@ namespace test
 		std::for_each (kAllPaths.begin(), kAllPaths.end(), &rmPathInTempRecursive);
 	}
 
+	void CollectorTest::handleScanFinished(const QString & path, const core::StatDataPtr & ptr)
+	{
+		current_stat_ = ptr;
+
+		emit scanFinished();
+	}
+
 	void CollectorTest::prepareData() const
 	{
+		QTest::addColumn<QString>("path");
 		QTest::addColumn<StatDataPtr> ("expected_stat_data");
 
-		QTest::newRow (kCleanPath.toAscii().constData()) << expected_stats_[kCleanPath];
-		QTest::newRow (kSingleFilePath.toAscii().constData()) << expected_stats_[kSingleFilePath];
-		QTest::newRow (kNestedCleanPath.toAscii().constData()) << expected_stats_[kNestedCleanPath];
-		QTest::newRow (kOneLevelPath.toAscii().constData()) << expected_stats_[kOneLevelPath];
+		QTest::newRow (kCleanPath.toAscii().constData()) << kCleanPath << expected_stats_[kCleanPath];
+		QTest::newRow (kSingleFilePath.toAscii().constData()) << kSingleFilePath << expected_stats_[kSingleFilePath];
+		QTest::newRow (kNestedCleanPath.toAscii().constData()) << kNestedCleanPath << expected_stats_[kNestedCleanPath];
+		QTest::newRow (kOneLevelPath.toAscii().constData()) << kOneLevelPath << expected_stats_[kOneLevelPath];
+		QTest::newRow (kCommonPath.toAscii().constData()) << kCommonPath << expected_stats_[kCommonPath];
 	}
 }

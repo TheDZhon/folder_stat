@@ -81,6 +81,8 @@ namespace test
 		T fst_;
 		T inc_;
 	};
+
+	bool waitForSignal(QObject *sender, const char *signal, int timeout = 1000);
 }
 
 #endif // FS_TEST_UTILS_H__

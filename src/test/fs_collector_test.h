@@ -49,10 +49,15 @@ namespace test {
 
 		void initTestCase();
 		void cleanupTestCase();
+
+		void handleScanFinished (const QString & path, const core::StatDataPtr & ptr);
+	signals:
+		void scanFinished ();
 	private:
 		void prepareData () const;
 
 		QHash<QString, core::StatDataPtr> expected_stats_;
+		core::StatDataPtr current_stat_;
 	};
 }
 

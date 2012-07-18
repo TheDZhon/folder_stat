@@ -27,6 +27,9 @@
 
 #include "fs_test_utils.h"
 
+#include <QEventLoop>
+#include <QTimer>
+
 namespace
 {
 	const QDir::Filters kDirsFilter = QDir::NoDotAndDotDot
@@ -111,9 +114,24 @@ namespace test
 		for (size_t i = 0; i < subdirs_cnt; ++i) {
 			const QString subdir = path + "/" + QString::number (i);
 			mkPathInTemp (subdir);
-			ret << subdir;
+			ret << kTempPath.canonicalPath() + "/" + subdir;
 		}
 
 		return ret;
+	}
+
+	bool waitForSignal (QObject* sender, const char* signal, int timeout)
+	{
+		QEventLoop loop;
+		QTimer timer;
+		timer.setInterval (timeout);
+		timer.setSingleShot (true);
+
+		loop.connect (sender, signal, SLOT (quit()));
+		loop.connect (&timer, SIGNAL (timeout()), SLOT (quit()));
+		timer.start();
+		loop.exec();
+
+		return timer.isActive();
 	}
 }

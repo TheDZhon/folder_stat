@@ -97,7 +97,10 @@ namespace test
 		{
 			QCOMPARE (it->count_, r_rec_map[it.key()].count_ * 2);
 			QCOMPARE (it->total_size_, r_rec_map[it.key()].total_size_ * 2);
-		}				
+		}	
+
+		QCOMPARE (l.all().count_, r.all().count_ * 2);
+		QCOMPARE (l.all().total_size_, r.all().total_size_ * 2);
 	}
 
 	void StatDataTest::testCollectFilesExts() 

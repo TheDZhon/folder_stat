@@ -202,6 +202,10 @@
 					RelativePath="..\..\..\..\src\test\fs_stat_data_test.cpp"
 					>
 				</File>
+				<File
+					RelativePath="..\..\..\..\src\test\fs_test_utils.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
