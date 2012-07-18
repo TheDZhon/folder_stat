@@ -27,7 +27,7 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QTreeView" name="treeView">
+      <widget class="gui::DirsTreeView" name="treeView">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>4</horstretch>
@@ -175,6 +175,13 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>gui::DirsTreeView</class>
+   <extends>QTreeView</extends>
+   <header>fs_dirs_tree_view.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../resources/fs_main_window.qrc"/>
  </resources>
