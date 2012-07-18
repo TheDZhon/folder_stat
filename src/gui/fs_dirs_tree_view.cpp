@@ -71,7 +71,7 @@ namespace gui
 	{
 		model_.setIconProvider (new LightweightIconProvider);
 		model_.setRootPath (QDir::currentPath());
-		model_.setFilter (QDir::AllDirs | QDir::NoDotAndDotDot);
+		model_.setFilter (QDir::AllDirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
 
 		model_.removeColumn (kTreeViewSizeColumn);
 		model_.removeColumn (kTreeViewTypeColumn);

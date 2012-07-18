@@ -39,6 +39,35 @@ namespace
 
 		kColumnsCnt
 	};
+
+	const char* kColumnnames [] = {
+		"Extension",
+		"Count",
+		"Total size",
+		"Average size"
+	};
+
+	const double kOrderLimit = 1024.;
+
+	const char* kSizesSuffixes [] = {
+		"B",
+		"KB",
+		"MB",
+		"GB",
+		"TB",
+		"EB"
+	};
+}
+
+QString humanReadableSize (double sz)
+{
+	size_t ind (0);
+	while (sz > kOrderLimit) {
+		sz /= kOrderLimit;
+		++ind;
+	}
+	//return QString::number(sz, 'f', 2).append("append(kSizesSuffixes[ind]);
+	return QString ("%1 %2").arg (sz, 0, 'f', 2).arg (kSizesSuffixes[ind]);
 }
 
 namespace gui
@@ -52,6 +81,16 @@ namespace gui
 	}
 
 	StatTableModel::~StatTableModel() {}
+
+	void StatTableModel::clear()
+	{
+		beginResetModel();
+
+		data_.clear();
+		path_.clear();
+
+		endResetModel();
+	}
 
 	int StatTableModel::rowCount (const QModelIndex& parent) const
 	{
@@ -79,10 +118,13 @@ namespace gui
 			const size_t col = index.column();
 
 			switch (col) {
-				case kExtension: return it.key();
+				case kExtension: {
+					const QString & ext = it.key();
+					return ext.isEmpty() ? "<None>" : ext;
+				}
 				case kCount: return it->count_;
-				case kTotalSize: return it->total_size_;
-				case kAvgSize: return (it->total_size_ / static_cast<double> (it->count_));
+				case kTotalSize: return humanReadableSize (it->total_size_);
+				case kAvgSize: return humanReadableSize (it->total_size_ / static_cast<double> (it->count_));
 			}
 		}
 
@@ -93,7 +135,7 @@ namespace gui
 	{
 		if (o == Qt::Horizontal) {
 			if (role == Qt::DisplayRole) {
-				return QString::number (section);
+				return tr (kColumnnames[section]);
 			}
 		}
 
@@ -106,6 +148,7 @@ namespace gui
 
 		path_ = path;
 		data_ = stat_data->extRecords();
+		data_["<All>"] = stat_data->all();
 
 		endResetModel();
 	}

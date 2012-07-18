@@ -31,6 +31,8 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QPushButton>
+#include <QProgressBar>
+#include <QSortFilterProxyModel>
 
 using namespace core;
 
@@ -39,6 +41,8 @@ namespace
 	const char* kAppName = "Folder Stat GUI";
 	const char* kOrgName = "PrefixInc";
 	const char* kCopyright = "(c) 2012, Eugene Mamin";
+
+	const size_t kStatusTruncateSymbols = 40;
 }
 
 namespace gui
@@ -50,7 +54,8 @@ namespace gui
 		  settings_dialog_(),
 		  settings_data_ (settings_dialog_.settings()),
 		  collector_(),
-		  stat_model_()
+		  stat_model_(),
+		  progressbar_()
 	{
 		ui.setupUi (this);
 
@@ -63,7 +68,9 @@ namespace gui
 	}
 
 	MainWindow::~MainWindow()
-	{}
+	{
+		progressbar_.setParent(0);
+	}
 
 	void MainWindow::setVisible (bool visible)
 	{
@@ -90,6 +97,7 @@ namespace gui
 		if (exit_status == QDialog::Rejected) { return; }
 
 		settings_data_ = settings_dialog_.settings();
+		settings_dialog_.saveState();
 
 		processSettingsData();
 	}
@@ -120,8 +128,23 @@ namespace gui
 		}
 	}
 
+	void MainWindow::handleScanRequest(const QString & path)
+	{
+		ui.refreshAction->setDisabled(true);
+		ui.collectedStatGroupBox->setTitle(QString());
+		stat_model_.clear();
+		ui.cancelCollectAction->setEnabled(true);
+		collector_.collect(path);
+
+		progressbar_.show();
+	}
+
 	void MainWindow::handleError (const QString& path, const QString& error)
 	{
+		ui.refreshAction->setEnabled(true);
+		ui.cancelCollectAction->setDisabled(true);
+		progressbar_.hide();
+
 		const QString err_mess = "Error processing " + path + ": " + error;
 
 		statusBar()->showMessage (err_mess);
@@ -132,11 +155,22 @@ namespace gui
 
 	void MainWindow::handleDirsCollected (const QString& p, const QFileInfoList& l)
 	{
-		statusBar()->showMessage (QString ("collecting: ") + p);
+		QString copy_p (p.right(kStatusTruncateSymbols));
+		
+		if (p.length() > kStatusTruncateSymbols) {
+			copy_p.prepend("...");
+		}
+
+		statusBar()->showMessage (QString ("collecting: ") + copy_p);
 	}
 
 	void MainWindow::handleFinished (const QString& path, const StatDataPtr& ptr)
 	{
+		ui.refreshAction->setEnabled(true);
+		ui.collectedStatGroupBox->setTitle (path);
+		ui.cancelCollectAction->setDisabled(true);
+		progressbar_.hide();
+
 		statusBar()->showMessage (path + ": task finished");
 	}
 
@@ -158,7 +192,15 @@ namespace gui
 		m->addSeparator();
 		m->addAction (ui.quitAction);
 
-		ui.tableView->setModel (&stat_model_);
+		QSortFilterProxyModel * mod = new QSortFilterProxyModel;
+		mod->setSourceModel(&stat_model_);
+		ui.tableView->setModel (mod);
+		ui.tableView->horizontalHeader()->setResizeMode (QHeaderView::Stretch);
+
+
+		progressbar_.setRange(0, 0);
+		statusBar()->addPermanentWidget(&progressbar_);
+		progressbar_.hide();
 
 		processSettingsData();
 	}
@@ -187,8 +229,7 @@ namespace gui
 
 		connect (ui.treeView,
 				 SIGNAL (scanRequest (const QString&)),
-				 &collector_,
-				 SLOT (collect (const QString&)));
+				 SLOT (handleScanRequest(const QString&)));
 
 		connect (&collector_,
 				 SIGNAL (error (const QString&, const QString&)),

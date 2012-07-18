@@ -44,7 +44,9 @@ namespace gui {
 	public:
 		StatTableModel (QObject * parent = 0);
 		virtual ~StatTableModel();
-
+	public slots:
+		void clear ();
+	public:
 		virtual int rowCount (const QModelIndex & parent) const;
 		virtual int columnCount (const QModelIndex & parent) const;
 		virtual QVariant data (const QModelIndex& index, int role) const;

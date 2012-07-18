@@ -54,6 +54,9 @@ namespace core
 			record.count_ += it->count_;
 			record.total_size_ += it->total_size_;
 		}
+
+		all_.count_ += other.all_.count_;
+		all_.total_size_ += other.all_.total_size_;
 	}
 
 	void StatData::collectFilesExts (const QFileInfoList& l)
@@ -73,10 +76,15 @@ namespace core
 		ExtensionRecord& record = ext_records_[ext];
 		++record.count_;
 		record.total_size_ += sz;
+
+		++all_.count_;
+		all_.total_size_ += sz;
 	}
 
 	bool StatData::operator== (const StatData & other) const {
-		return (subdirs_ == other.subdirs()) && (ext_records_ == other.ext_records_);
+		return (subdirs_ == other.subdirs()) 
+			&& (ext_records_ == other.ext_records_)
+			&& (all_ == other.all_);
 	}
 
 	bool operator== (const StatData::ExtensionRecord& l, const StatData::ExtensionRecord& r)

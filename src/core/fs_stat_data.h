@@ -55,16 +55,18 @@ namespace core
 
 		typedef QHash<QString, ExtensionRecord> ExtRecordsMap;
 
-		StatData() {}
+		StatData(): subdirs_(), ext_records_(), all_() {}
 		~StatData() {}
 
 		void appendOther (const StatData&);
 
-		void setSubdirs (const QFileInfoList & subdirs) { subdirs_ = subdirs; }
-		QFileInfoList subdirs () const { return subdirs_; }
+		inline void setSubdirs (const QFileInfoList & subdirs) { subdirs_ = subdirs; }
+		inline QFileInfoList subdirs () const { return subdirs_; }
 
 		void collectFilesExts (const QFileInfoList&);
-		ExtRecordsMap extRecords () const { return ext_records_; }
+		inline ExtRecordsMap extRecords () const { return ext_records_; }
+
+		inline ExtensionRecord all () const { return all_; }
 
 		bool operator==(const StatData & other) const;
 	private:
@@ -74,6 +76,8 @@ namespace core
 
 		QFileInfoList subdirs_;
 		QHash<QString, ExtensionRecord> ext_records_;
+
+		ExtensionRecord all_;
 	};
 
 	bool operator==(const StatData::ExtensionRecord&, const StatData::ExtensionRecord&);	

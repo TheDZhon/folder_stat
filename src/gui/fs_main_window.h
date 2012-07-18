@@ -40,6 +40,7 @@
 
 #include <QtGui/QMainWindow>
 #include <QSystemTrayIcon>
+#include <QProgressBar>
 
 namespace gui
 {
@@ -60,6 +61,8 @@ namespace gui
 		void handleAboutQtAction ();
 
 		void handleTrayActivated(QSystemTrayIcon::ActivationReason);
+
+		void handleScanRequest (const QString & path);
 
 		void handleError (const QString& path, const QString & error);
 		void handleDirsCollected (const QString&, const QFileInfoList&);
@@ -87,6 +90,8 @@ namespace gui
 		core::Collector collector_;
 
 		StatTableModel stat_model_;
+
+		QProgressBar progressbar_;
 	};
 }
 
