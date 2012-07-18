@@ -44,29 +44,9 @@ namespace gui
 		model_(),
 		contextMenu_()
 	{
-		model_.setIconProvider (new LightweightIconProvider);
-		model_.setRootPath (QDir::currentPath());
-		model_.removeColumn (kTreeViewSizeColumn);
-		model_.removeColumn (kTreeViewTypeColumn);
-		model_.removeColumn (kTreeViewDateColumn);
-		model_.setFilter (QDir::AllDirs | QDir::NoDotAndDotDot);
-
-		setModel (&model_);
-		hideColumn (kTreeViewSizeColumn);
-		hideColumn (kTreeViewTypeColumn);
-		hideColumn (kTreeViewDateColumn);
-		setUniformRowHeights (true);
-		setContextMenuPolicy (Qt::CustomContextMenu);
-
-		QAction* scanAction = new QAction (QIcon (":/icons/scan"), "Scan", &contextMenu_);
-		contextMenu_.addAction (scanAction);
-
-		connect (this,
-				 SIGNAL (customContextMenuRequested (const QPoint&)),
-				 SLOT (handleContextMenu (const QPoint&)));
-		connect (scanAction,
-				 SIGNAL (triggered()),
-				 SLOT (handleScanAction()));
+		initModel();
+		initView();
+		initContextMenu();
 	}
 
 	DirsTreeView::~DirsTreeView () {}
@@ -83,7 +63,45 @@ namespace gui
 	{
 		const QModelIndex& ind = currentIndex();
 		if (ind.isValid()) {
-			emit scanRequest (model_.filePath(ind));
+			emit scanRequest (model_.filePath (ind));
 		}
+	}
+
+	void DirsTreeView::initModel()
+	{
+		model_.setIconProvider (new LightweightIconProvider);
+		model_.setRootPath (QDir::currentPath());
+		model_.setFilter (QDir::AllDirs | QDir::NoDotAndDotDot);
+
+		model_.removeColumn (kTreeViewSizeColumn);
+		model_.removeColumn (kTreeViewTypeColumn);
+		model_.removeColumn (kTreeViewDateColumn);
+	}
+
+	void DirsTreeView::initView()
+	{
+		setModel (&model_);
+		setUniformRowHeights (true);
+		setContextMenuPolicy (Qt::CustomContextMenu);
+
+		hideColumn (kTreeViewSizeColumn);
+		hideColumn (kTreeViewTypeColumn);
+		hideColumn (kTreeViewDateColumn);
+	}
+
+	void DirsTreeView::initContextMenu()
+	{
+		QAction* scanAction = new QAction (
+			QIcon (":/icons/scan"),
+			"Scan",
+			&contextMenu_);
+		contextMenu_.addAction (scanAction);
+
+		connect (this,
+				 SIGNAL (customContextMenuRequested (const QPoint&)),
+				 SLOT (handleContextMenu (const QPoint&)));
+		connect (scanAction,
+				 SIGNAL (triggered()),
+				 SLOT (handleScanAction()));
 	}
 }

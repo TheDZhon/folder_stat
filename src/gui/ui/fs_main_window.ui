@@ -105,7 +105,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="clearCacheAction"/>
    <addaction name="refreshAction"/>
+   <addaction name="cancelCollectAction"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="settingsAction">
@@ -171,6 +173,16 @@
   <action name="aboutQtAction">
    <property name="text">
     <string>About Qt</string>
+   </property>
+  </action>
+  <action name="clearCacheAction">
+   <property name="text">
+    <string>Clear cache</string>
+   </property>
+  </action>
+  <action name="cancelCollectAction">
+   <property name="text">
+    <string>Cancel collect</string>
    </property>
   </action>
  </widget>

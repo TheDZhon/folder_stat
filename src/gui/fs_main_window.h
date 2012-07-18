@@ -61,7 +61,7 @@ namespace gui
 		void handleTrayActivated(QSystemTrayIcon::ActivationReason);
 
 		void handleError (const QString& path, const QString & error);
-		void handleDirsCollected (const QString& path, const core::StatDataPtr & data);
+		void handleDirsCollected (const QString&, const QFileInfoList&);
 		void handleFinished (const QString & path, const core::StatDataPtr & data);
 	private:
 		Q_DISABLE_COPY (MainWindow);
@@ -82,6 +82,8 @@ namespace gui
 		SettingsDialog settings_dialog_;
 
 		SettingsData settings_data_;
+
+		core::Collector collector_;
 	};
 }
 

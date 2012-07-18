@@ -27,8 +27,6 @@
 
 #include "fs_settings_dialog.h"
 
-using namespace core;
-
 #include <QSettings>
 
 namespace

@@ -54,6 +54,10 @@ namespace gui
 	private:
 		Q_DISABLE_COPY (DirsTreeView);
 
+		void initModel();
+		void initView();
+		void initContextMenu();
+
 		QFileSystemModel model_;
 		QMenu contextMenu_;
 	};

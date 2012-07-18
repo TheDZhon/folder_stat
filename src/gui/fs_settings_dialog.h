@@ -34,8 +34,6 @@
 
 #include "ui_fs_settings_dialog.h"
 
-#include "gui/fs_settings_data.h"
-
 #include <QDialog>
 
 namespace gui

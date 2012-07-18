@@ -48,13 +48,17 @@ namespace gui
 		  ui(),
 		  tray_icon_(),
 		  settings_dialog_(),
-		  settings_data_ (settings_dialog_.settings())
+		  settings_data_ (settings_dialog_.settings()),
+		  collector_()
 	{
 		ui.setupUi (this);
 
 		loadWindowState ();
 		connectUi();
 		configureUi();
+
+		qRegisterMetaType<QFileInfoList> ("QFileInfoList");
+		qRegisterMetaType<core::StatDataPtr> ("core::StatDataPtr");
 	}
 
 	MainWindow::~MainWindow()
@@ -125,14 +129,14 @@ namespace gui
 		}
 	}
 
-	void MainWindow::handleDirsCollected(const QString& path, const core::StatDataPtr & data)
+	void MainWindow::handleDirsCollected (const QString& p, const QFileInfoList& l)
 	{
-		// build tree
+		statusBar()->showMessage (QString ("collecting: ") + p);
 	}
 
 	void MainWindow::handleFinished (const QString& path, const StatDataPtr& ptr)
 	{
-		// build tree
+		statusBar()->showMessage (path + ": task finished");
 	}
 
 	void MainWindow::configureUi()
@@ -177,6 +181,30 @@ namespace gui
 		connect (&tray_icon_,
 				 SIGNAL (activated (QSystemTrayIcon::ActivationReason)),
 				 SLOT (handleTrayActivated (QSystemTrayIcon::ActivationReason)));
+
+		connect (ui.treeView,
+				 SIGNAL (scanRequest (const QString&)),
+				 &collector_,
+				 SLOT (collect (const QString&)));
+
+		connect (&collector_,
+				 SIGNAL (error (const QString&, const QString&)),
+				 SLOT (handleError (const QString&, const QString&)));
+		connect (&collector_,
+				 SIGNAL (dirsCollected (const QString&, const QFileInfoList&)),
+				 SLOT (handleDirsCollected (const QString&, const QFileInfoList&)));
+		connect (&collector_,
+				 SIGNAL (finished (const QString&, const core::StatDataPtr&)),
+				 SLOT (handleFinished (const QString, const core::StatDataPtr&)));
+
+		connect (ui.cancelCollectAction,
+				 SIGNAL (triggered()),
+				 &collector_,
+				 SLOT (cancel()));
+		connect (ui.clearCacheAction,
+				 SIGNAL (triggered()),
+				 &collector_,
+				 SLOT (clearCache ()));
 	}
 
 	void MainWindow::closeEvent (QCloseEvent* ev)
@@ -238,7 +266,7 @@ namespace gui
 
 	void MainWindow::processSettingsData()
 	{
-		tray_icon_.setVisible (settings_data_.tray_icon_);
+		tray_icon_.setVisible (settings_data_.show_tray_icon_);
 		ui.hideWindowAction->setEnabled (settings_data_.allow_minimize_to_tray_);
 		ui.restoreWindowAction->setEnabled (settings_data_.allow_minimize_to_tray_);
 	}
