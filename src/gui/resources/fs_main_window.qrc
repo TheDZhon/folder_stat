@@ -1,5 +1,8 @@
 <RCC>
   <qresource prefix="/icons">
+    <file alias="scan">icons/tools-wizard.png</file>
+    <file alias="cancel">icons/image-missing.png</file>
+    <file alias="erase">icons/tools-media-optical-erase.png</file>
     <file alias="exit">icons/application-exit.png</file>
     <file alias="drive">icons/drive-harddisk.png</file>
     <file alias="folder">icons/folder-blue.png</file>
