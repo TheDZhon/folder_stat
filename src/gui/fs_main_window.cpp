@@ -49,11 +49,10 @@ namespace gui
 	MainWindow::MainWindow (QWidget* parent, Qt::WFlags flags)
 		: QMainWindow (parent, flags),
 		  ui(),
-		  tray_icon_(),
 		  settings_dialog_(),
 		  settings_data_ (settings_dialog_.settings()),
 		  collector_(),
-		  progressbar_()
+		  notifier_ (this)
 	{
 		ui.setupUi (this);
 
@@ -66,13 +65,14 @@ namespace gui
 
 	MainWindow::~MainWindow()
 	{
-		progressbar_.setParent (0);
+		notifier_.setParent (0);
 	}
 
 	void MainWindow::setVisible (bool visible)
 	{
 		ui.hideWindowAction->setVisible (visible);
 		ui.restoreWindowAction->setVisible (!visible);
+
 		QMainWindow::setVisible (visible);
 	}
 
@@ -121,25 +121,9 @@ namespace gui
 		QMessageBox::aboutQt (this);
 	}
 
-	void MainWindow::handleTrayActivated (QSystemTrayIcon::ActivationReason reason)
-	{
-		switch (reason) {
-			case QSystemTrayIcon::DoubleClick:
-				if (settings_data_.allow_minimize_to_tray_) {
-					setVisible (!isVisible());
-				};
-				break;
-			case QSystemTrayIcon::MiddleClick:
-				tray_icon_.showMessage (tr ("Current status").append (": "), statusBar()->currentMessage());
-				break;
-			default:
-				;
-		}
-	}
-
 	void MainWindow::handleError (const QString& path, const QString& error)
 	{
-		processFinish (false, tr ("Error").append (": ") + error);
+		processFinish (false, error);
 	}
 
 	void MainWindow::handleDirectSubfolders (const QString& path, int cnt)
@@ -156,43 +140,35 @@ namespace gui
 			copy_p.prepend ("...");
 		}
 
-		statusBar()->showMessage (QString ("collecting: ") + copy_p);
+		notifier_.statusMessage (copy_p);
 	}
 
 	void MainWindow::handleFinished (const QString& path, const StatDataPtr& ptr)
 	{
 		ui.tableView->setData (path, ptr);
 
-		processFinish (true, "Finished");
+		processFinish (true, tr("Task finished successfully"));
 	}
 
 	void MainWindow::configureUi()
 	{
 		setWindowTitle (tr (kAppName));
 
-		statusBar()->showMessage ("Idle");
-
 		ui.hideWindowAction->setIcon (style()->standardIcon (QStyle::SP_TitleBarMinButton));
 		ui.restoreWindowAction->setIcon (style()->standardIcon (QStyle::SP_TitleBarNormalButton));
 
-		tray_icon_.setIcon (windowIcon());
-
-		tray_icon_.setContextMenu (new QMenu);
-		QMenu* m = tray_icon_.contextMenu();
-		m->addAction (ui.hideWindowAction);
-		m->addAction (ui.restoreWindowAction);
-		m->addSeparator();
-		m->addAction (ui.clearCacheAction);
-		m->addAction (ui.cancelCollectAction);
-		m->addSeparator();
-		m->addAction (ui.quitAction);
+		QMenu* tray_menu = new QMenu;
+		tray_menu->addAction (ui.hideWindowAction);
+		tray_menu->addAction (ui.restoreWindowAction);
+		tray_menu->addSeparator();
+		tray_menu->addAction (ui.clearCacheAction);
+		tray_menu->addAction (ui.cancelCollectAction);
+		tray_menu->addSeparator();
+		tray_menu->addAction (ui.quitAction);
+		notifier_.addTrayMenu (tray_menu);
 
 		ui.treeView->addAction (ui.scanAction);
 		ui.treeView->addAction (ui.refreshAction);
-
-		progressbar_.setRange (0, 0);
-		statusBar()->addPermanentWidget (&progressbar_);
-		progressbar_.hide();
 
 		processSettingsData();
 	}
@@ -225,10 +201,6 @@ namespace gui
 		connect (ui.aboutQtAction,
 				 SIGNAL (triggered()),
 				 SLOT (handleAboutQtAction()));
-
-		connect (&tray_icon_,
-				 SIGNAL (activated (QSystemTrayIcon::ActivationReason)),
-				 SLOT (handleTrayActivated (QSystemTrayIcon::ActivationReason)));
 
 		connect (&collector_,
 				 SIGNAL (error (const QString&, const QString&)),
@@ -275,9 +247,9 @@ namespace gui
 
 		if (confirmMsgBox.clickedButton() == hideButton) {
 			if (settings_data_.show_notifications_) {
-				tray_icon_.showMessage (tr (kAppName), tr ("The program will keep running in the "
-														   "system tray. To terminate the program, "
-														   "choose \"Quit\" in the context menu "));
+				notifier_.trayMessage (tr ("The program will keep running in the "
+										   "system tray. To terminate the program, "
+										   "choose \"Quit\" in the context menu "));
 			}
 			hide();
 			ev->ignore();
@@ -307,7 +279,8 @@ namespace gui
 
 	void MainWindow::processSettingsData()
 	{
-		tray_icon_.setVisible (settings_data_.show_tray_icon_);
+		notifier_.setSettingsData (settings_data_);
+
 		ui.hideWindowAction->setEnabled (settings_data_.allow_minimize_to_tray_);
 		ui.restoreWindowAction->setEnabled (settings_data_.allow_minimize_to_tray_);
 
@@ -316,9 +289,6 @@ namespace gui
 
 	void MainWindow::processScan (bool use_cache)
 	{
-		ui.collectedStatGroupBox->setTitle (QString());
-		ui.tableView->clearData();
-
 		ui.cancelCollectAction->setEnabled (true);
 		ui.scanAction->setDisabled (true);
 		ui.refreshAction->setDisabled (true);
@@ -326,23 +296,37 @@ namespace gui
 		const QString& path = ui.treeView->currentFilePath();
 
 		ui.collectedStatGroupBox->setTitle (path);
-		progressbar_.show();
+
+		notifier_.setBusy (true);
 
 		collector_.collect (path, use_cache);
 	}
 
 	void MainWindow::processFinish (bool success, const QString& mess)
 	{
+		notifier_.setBusy (false);
+
 		const QString& path = ui.treeView->currentFilePath();
 
-		ui.scanAction->setDisabled(success);
+		ui.scanAction->setDisabled (success);
 		ui.refreshAction->setEnabled (success);
 		ui.cancelCollectAction->setDisabled (true);
 
-		progressbar_.hide();
-
-		if (!mess.isEmpty()) {
-			statusBar()->showMessage (mess);
+		if (success) {
+			notifier_.statusMessage (mess);
+			notifier_.trayMessage (mess);
+		} else {
+			notifier_.errorMessage (mess);
 		}
+
+		if (!success) { clearStats(); }
+	}
+
+	void MainWindow::clearStats()
+	{
+		ui.collectedStatGroupBox->setTitle (QString());
+		ui.tableView->clearData();
+		ui.childrenCntSpinBox->setDisabled (true);
+		ui.childrenCntSpinBox->setValue (0);
 	}
 }

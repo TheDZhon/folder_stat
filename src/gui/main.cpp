@@ -37,8 +37,13 @@ int main (int argc, char* argv[])
 	QApplication app (argc, argv);
 
 	QTranslator qtTranslator;
-	qtTranslator.load ("folder_stat_" + QLocale::system().name());
+	qtTranslator.load ("qt_" + QLocale::system().name(),
+					   QLibraryInfo::location (QLibraryInfo::TranslationsPath));
 	app.installTranslator (&qtTranslator);
+
+	QTranslator fsStatTranslator;
+	fsStatTranslator.load ("folder_stat_" + QLocale::system().name());
+	app.installTranslator (&fsStatTranslator);
 
 	MainWindow window;
 	window.show();

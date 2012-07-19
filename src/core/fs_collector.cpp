@@ -35,7 +35,7 @@ namespace
 {
 	const char * kNotExists = QT_TRANSLATE_NOOP ("core::Collector", "Invalid path");
 	const char * kNotADir = QT_TRANSLATE_NOOP ("core::Collector", "Not a directory");
-	const char * kCanceled = QT_TRANSLATE_NOOP ("core::Collector", "Canceled");
+	const char * kCanceled = QT_TRANSLATE_NOOP ("core::Collector", "Task canceled by user");
 
 	const QDir::Filters kCommonFilters = QDir::Readable
 										 | QDir::Hidden

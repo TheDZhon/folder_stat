@@ -61,7 +61,7 @@ namespace gui
 		ui.trayIconCheckBox->setChecked (sets.value ("tray_icon", true).toBool());
 		ui.allowMinimizeToTrayCheckBox->setChecked (sets.value ("allow_min_to_tray", true).toBool());
 		ui.showNotificationsCheckBox->setChecked (sets.value ("notifications", true).toBool());
-		ui.notificationTimeoutSpinBox->setValue (sets.value ("notify_timeout", 10).toInt());
+		ui.notificationTimeoutSpinBox->setValue (sets.value ("notify_timeout", 1000).toInt());
 		ui.useCacheCheckBox->setChecked (sets.value ("use_cache", true).toBool());
 		ui.cacheMaxItemsSpinBox->setValue (sets.value ("max_cache_items", 10000).toInt());
 	}

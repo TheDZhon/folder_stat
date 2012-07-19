@@ -25,72 +25,48 @@
 //    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
-#ifndef FS_MAIN_WINDOW_H__
-#define FS_MAIN_WINDOW_H__
+#ifndef FS_NOTIFIER_H__
+#define FS_NOTIFIER_H__
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
 #pragma once
 #endif
 
-#include "ui_fs_main_window.h"
+#include "fs_settings_dialog.h"
 
-#include "gui/fs_settings_dialog.h"
-#include "gui/fs_nofiier.h"
-#include "core/fs_collector.h"
-
-#include <QtGui/QMainWindow>
-#include <QSystemTrayIcon>
 #include <QProgressBar>
+#include <QMainWindow>
+#include <QStatusBar>
+#include <QSystemTrayIcon>
 
 namespace gui
 {
-	class MainWindow : public QMainWindow
+	class Notifier: public QObject
 	{
 		Q_OBJECT
 	public:
-		MainWindow (QWidget* parent = 0, Qt::WFlags flags = 0);
-		virtual ~MainWindow();
+		Notifier (QMainWindow* parent);
+		~Notifier();
 
-		virtual void setVisible(bool);
+		void setSettingsData (const SettingsData& data) { settings_data_ = data; }
+
+		void statusMessage (const QString& mess);
+		void trayMessage (const QString& mess);
+		void errorMessage (const QString& err_mess);
+
+		void addTrayMenu (QMenu* menu);
+
+		void setBusy (bool on);
 	private slots:
-		void handleCurrentPathChanged (const QString & path);
-
-		void handleQuitAction ();
-		void handleScanAction ();
-		void handleRefreshAction ();
-		void handleSettingsAction ();
-		void handleAboutAction ();
-		void handleAboutQtAction ();
-
-		void handleError (const QString& path, const QString & error);
-		void handleDirectSubfolders (const QString & path, int cnt);
-		void handleCurrentScannedDir (const QString&, const QString&);
-		void handleFinished (const QString & path, const core::StatDataPtr & data);
+		void init ();
+		void handleTrayActivated (QSystemTrayIcon::ActivationReason);
 	private:
-		Q_DISABLE_COPY (MainWindow);
-
-		void configureUi ();
-		void connectUi () const;
-
-		virtual void closeEvent (QCloseEvent*);
-
-		void loadWindowState ();
-		void saveWindowState () const;
-
-		void processSettingsData ();
-		void processScan (bool use_cache);
-		void processFinish (bool success, const QString & mess = QString());
-		void clearStats ();
-
-		Ui::MainWindow ui;
-
-		SettingsDialog settings_dialog_;
 		SettingsData settings_data_;
 
-		core::Collector collector_;
-		gui::Notifier notifier_;
+		QStatusBar* status_bar_;
+		QSystemTrayIcon tray_icon_;
+		QProgressBar progressbar_;
 	};
 }
 
-#endif // FS_MAIN_WINDOW_H__
-
+#endif // FS_NOTIFIER_H__
