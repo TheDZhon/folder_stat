@@ -1,0 +1,33 @@
+================================================================================================
+I. Prerequisites:
+================================================================================================
+
+Qt 4.7 or later [http://qt-project.org/downloads]
+CMake 2.8.6 or later [http://cmake.org/cmake/resources/software.html]
+C++ compiler and toolchain (MSVS 2005+ on Windows, GNU GCC on Linux, other platforms might work)
+
+================================================================================================
+II. Instructions:
+================================================================================================
+
+[+] Windows users [from existing solution]
+
+1. Goto build/win32/sln_msvc2005
+2. Open provided .sln file
+
+[+] Windows users [cmake]
+
+1. Open MSVS command prompt.
+2. Change current path to build/win32/cmake.
+3. Run one of the provided bat files:
+   * build_nmake.bat  -- Build solution and run tests with nmake in batch mode.
+   * gen_sln_20xx.bat -- Generate project files into build/win32/cmake/sln/20xx directory.
+
+[+] Linux users [cmake]:
+
+1. Change current path to build/linux.
+2. Run build.sh script.
+
+[+] Advanced users [cmake]:
+
+1. Run cmake with your settings for src/CMakeLists.txt file.
