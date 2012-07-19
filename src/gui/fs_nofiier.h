@@ -41,21 +41,54 @@
 
 namespace gui
 {
+	/**
+	 ** Notifier class.
+	 ** Responsible for all notifications from MainWindow.
+	 ** @sa MainWindow
+	 **/
 	class Notifier: public QObject
 	{
 		Q_OBJECT
 	public:
+		/**
+		 ** Default QObject-style constructor.
+		 ** @param[in] parent parent QMainWindow instance.
+		 **/
 		Notifier (QMainWindow* parent);
+		/**
+		 ** Destructor.
+		 **/
 		~Notifier();
-
-		void setSettingsData (const SettingsData& data) { settings_data_ = data; }
-
+		/**
+		 ** Set settings for notifications.
+		 ** @param[in] settings_data settings
+		 **/
+		void setSettingsData (const SettingsData& settings_data) { settings_data_ = settings_data; }
+		/**
+		 ** Show status message (in status bar at this moment).
+		 ** @param[in] mess message
+		 **/
 		void statusMessage (const QString& mess);
+		/**
+		 ** Show message in system tray.
+		 ** @param[in] mess message
+		 **/
 		void trayMessage (const QString& mess);
+		/**
+		 ** Show error message.
+		 ** @param[in] err_mess error message
+		 **/
 		void errorMessage (const QString& err_mess);
-
+		/**
+		 ** Add menu to tray icon.
+		 ** Takes ownership of menu object.
+		 ** @param[in] menu menu object
+		 **/
 		void addTrayMenu (QMenu* menu);
-
+		/**
+		 ** Enable/disable busy indication.
+		 ** @param[in] on enable if true, disable if false
+		 **/
 		void setBusy (bool on);
 	private slots:
 		void init ();

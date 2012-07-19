@@ -33,10 +33,10 @@
 
 namespace
 {
-	const char * kNotExists = QT_TRANSLATE_NOOP ("core::Collector", "Invalid path");
-	const char * kNotADir = QT_TRANSLATE_NOOP ("core::Collector", "Not a directory");
-	const char * kCantRead = QT_TRANSLATE_NOOP ("core::Collector", "Path is not readable");
-	const char * kCanceled = QT_TRANSLATE_NOOP ("core::Collector", "Task canceled by user");
+	const char* kNotExists = QT_TRANSLATE_NOOP ("core::Collector", "Invalid path");
+	const char* kNotADir = QT_TRANSLATE_NOOP ("core::Collector", "Not a directory");
+	const char* kCantRead = QT_TRANSLATE_NOOP ("core::Collector", "Path is not readable");
+	const char* kCanceled = QT_TRANSLATE_NOOP ("core::Collector", "Task canceled by user");
 
 	const QDir::Filters kCommonFilters = QDir::Readable
 										 | QDir::Hidden
@@ -61,7 +61,7 @@ namespace core
 			std::unary_function<const QFileInfo&, StatDataPtr> {
 
 		mapper (const QString& path, Collector* c, bool use_cache) :
-			path_ (path), collector_ (c), use_cache_(use_cache) { Q_ASSERT (c); }
+			path_ (path), collector_ (c), use_cache_ (use_cache) { Q_ASSERT (c); }
 
 		StatDataPtr operator() (const QFileInfo& finfo) {
 			Q_ASSERT (finfo.isDir());
@@ -112,8 +112,8 @@ namespace core
 		const QString& canonPath = QFileInfo (path).canonicalFilePath();
 		const QFileInfo pathInfo (canonPath);
 
-		if (!pathInfo.exists()) { emit error (path, tr(kNotExists)); return; }
-		if (!pathInfo.isDir()) { emit error (path, tr(kNotADir)); return; }
+		if (!pathInfo.exists()) { emit error (path, tr (kNotExists)); return; }
+		if (!pathInfo.isDir()) { emit error (path, tr (kNotADir)); return; }
 		if (!pathInfo.isReadable()) { emit error (path, tr (kCantRead)); return; }
 
 		emit directSubfolders (path, getSubdirs (pathInfo).size());
@@ -121,7 +121,7 @@ namespace core
 		StatDataPtr full_answer = collectImplAux (path, pathInfo, use_cache);
 
 		if (terminator_flag_ == kTerminate) {
-			emit error (path, tr(kCanceled));
+			emit error (path, tr (kCanceled));
 			cacher_.clear();
 		} else {
 			emit finished (path, full_answer);

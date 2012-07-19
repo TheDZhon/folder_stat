@@ -71,7 +71,7 @@ namespace core
 		/**
 		 ** Default constructor.
 		 **/
-		StatData(): ext_records_(), all_() {}
+		StatData() : ext_records_(), all_() {}
 		/**
 		 ** Destructor.
 		 **/
@@ -94,19 +94,19 @@ namespace core
 		 ** Get collected statistics for <all> pseudo-group.
 		 **/
 		inline ExtensionRecord all () const { return all_; }
-		
-		bool operator==(const StatData & other) const;
+
+		bool operator== (const StatData& other) const;
 	private:
 		Q_DISABLE_COPY (StatData);
 
-		void incExtCnt (const QString & ext, quint64 sz);
+		void incExtCnt (const QString& ext, quint64 sz);
 
 		QHash<QString, ExtensionRecord> ext_records_;
 
 		ExtensionRecord all_;
 	};
 
-	bool operator==(const StatData::ExtensionRecord&, const StatData::ExtensionRecord&);	
+	bool operator== (const StatData::ExtensionRecord&, const StatData::ExtensionRecord&);
 }
 
 Q_DECLARE_METATYPE (core::StatDataPtr);

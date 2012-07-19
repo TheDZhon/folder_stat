@@ -42,6 +42,11 @@ namespace
 
 namespace gui
 {
+	/**
+	 ** Lightweight icon provider for QFileSystemModel.
+	 ** Used by DirsTreeWidget for drawing optimizations.
+	 ** @sa DirsTreeWidget
+	 **/
 	class LightweightIconProvider:
 		public QFileIconProvider
 	{
@@ -50,18 +55,34 @@ namespace gui
 			folder_ (":/icons/folder"),
 			drive_ (":/icons/drive")
 		{}
-
+		/**
+		 ** Get icon by type.
+		 ** Reimplemented from base.
+		 ** @param[in] type icon type
+		 ** @return icon object
+		 **/
 		virtual QIcon icon (QFileIconProvider::IconType type) const {
 			if (type == QFileIconProvider::Drive) { return drive_; }
 			return folder_;
 		}
-
+		/**
+		 ** Get icon by file information object.
+		 ** Reimplemented from base.
+		 ** @param[in] info file information
+		 ** @return icon object
+		 **/
 		virtual QIcon icon (const QFileInfo& info) const {
 #if defined(Q_OS_WIN)
 			if (info.canonicalFilePath().size() == kLettersInDrivePath) { return drive_; }
 #endif
 			return folder_;
 		}
+		/**
+		 ** Get icon type string by file information.
+		 ** Reimplemented from base.
+		 ** @param[in] info file information
+		 ** @return type string
+		 **/
 		virtual QString	type (const QFileInfo& info) const {
 			return kEmptyType;
 		}

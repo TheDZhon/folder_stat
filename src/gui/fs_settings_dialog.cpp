@@ -29,8 +29,8 @@
 
 #include <QSettings>
 
-extern const char * kAppName;
-extern const char * kOrgName;
+extern const char* kAppName;
+extern const char* kOrgName;
 
 namespace gui
 {

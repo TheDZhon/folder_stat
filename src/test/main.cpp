@@ -20,7 +20,7 @@ int main (int argc, char** argv)
 
 	CollectorTest collector_test;
 	int collector_test_result = QTest::qExec (&collector_test, argc, argv);
-	if (collector_test_result != EXIT_SUCCESS) { return collector_test_result; }	
+	if (collector_test_result != EXIT_SUCCESS) { return collector_test_result; }
 
 	return EXIT_SUCCESS;
 }

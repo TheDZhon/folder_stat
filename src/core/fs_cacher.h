@@ -40,7 +40,7 @@
 namespace core
 {
 	/**
-	 ** Cacher class. 
+	 ** Cacher class.
 	 ** Provides thread-safe data caching with many readers/one writer scheme.
 	 **/
 	class Cacher
@@ -52,7 +52,7 @@ namespace core
 		 **/
 		Cacher (size_t init_sz = 10000);
 		/**
-		 ** Destructor. 
+		 ** Destructor.
 		 **/
 		~Cacher () {}
 		/**
@@ -68,7 +68,7 @@ namespace core
 		 **/
 		void store (const QString& path, const StatDataPtr& stat_data);
 		/**
-		 ** Set cache capacity. 
+		 ** Set cache capacity.
 		 ** Old items removed when capacity exceeded.
 		 ** @param[in] num new capacity
 		 **/

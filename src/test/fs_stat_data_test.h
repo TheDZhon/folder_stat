@@ -29,14 +29,15 @@
 #define FS_STAT_DATA_TEST_H__
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
-	#pragma once
+#pragma once
 #endif
 
 #include "core/fs_stat_data.h"
 
 #include <QObject>
 
-namespace test {
+namespace test
+{
 	class StatDataTest: public QObject
 	{
 		Q_OBJECT
@@ -46,7 +47,7 @@ namespace test {
 
 		void testCollectFilesExts_data () const { prepareFiles(); }
 		void testCollectFilesExts ();
-		
+
 		void initTestCase();
 		void cleanupTestCase ();
 	private:

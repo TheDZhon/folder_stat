@@ -68,21 +68,21 @@ namespace test
 
 	template<typename T>
 	struct iota_emulator_generator {
-		iota_emulator_generator (T fst, T inc): 
-			fst_(fst),
-			inc_(inc) {}
+		iota_emulator_generator (T fst, T inc) :
+			fst_ (fst),
+			inc_ (inc) {}
 
 		inline T operator () () {
 			T old = fst_;
 			fst_ += inc_;
 			return old;
-		}		
-		
+		}
+
 		T fst_;
 		T inc_;
 	};
 
-	bool waitForSignal(QObject *sender, const char *signal, int timeout = 1000);
+	bool waitForSignal (QObject* sender, const char* signal, int timeout = 1000);
 }
 
 #endif // FS_TEST_UTILS_H__

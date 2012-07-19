@@ -50,20 +50,20 @@ namespace gui
 
 	DirsTreeWidget::~DirsTreeWidget () {}
 
-	QString DirsTreeWidget::currentFilePath() const 
+	QString DirsTreeWidget::currentFilePath() const
 	{
 		if (currentIndex().isValid()) {
-			return model_.filePath(currentIndex());
+			return model_.filePath (currentIndex());
 		}
 		return QString();
 	}
 
-	void DirsTreeWidget::currentChanged(const QModelIndex &current, const QModelIndex &previous)
+	void DirsTreeWidget::currentChanged (const QModelIndex& current, const QModelIndex& previous)
 	{
-		QTreeView::currentChanged(current, previous);
+		QTreeView::currentChanged (current, previous);
 		if (current.isValid()) {
-			const QString & path = model_.filePath(current);
-			emit currentPathChanged(path);
+			const QString& path = model_.filePath (current);
+			emit currentPathChanged (path);
 		}
 	}
 

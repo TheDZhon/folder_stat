@@ -64,10 +64,9 @@ namespace core
 		typedef QFileInfoList::const_iterator It;
 
 		for (It it = l.begin(); it != l.end();
-			 ++it)
-		{
+			 ++it) {
 			Q_ASSERT (it->isFile());
-			incExtCnt (it->suffix(), it->size());	
+			incExtCnt (it->suffix(), it->size());
 		}
 	}
 
@@ -81,9 +80,10 @@ namespace core
 		all_.total_size_ += sz;
 	}
 
-	bool StatData::operator== (const StatData & other) const {
+	bool StatData::operator== (const StatData& other) const
+	{
 		return (ext_records_ == other.ext_records_)
-			&& (all_ == other.all_);
+			   && (all_ == other.all_);
 	}
 
 	bool operator== (const StatData::ExtensionRecord& l, const StatData::ExtensionRecord& r)

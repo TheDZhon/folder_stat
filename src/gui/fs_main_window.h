@@ -44,16 +44,30 @@
 
 namespace gui
 {
+	/**
+	 ** Main window class.
+	 **/
 	class MainWindow : public QMainWindow
 	{
 		Q_OBJECT
 	public:
+		/**
+		 ** Default constructor.
+		 ** @param[in] parent parent object
+		 ** @param[in] flags window creation flags
+		 **/
 		MainWindow (QWidget* parent = 0, Qt::WFlags flags = 0);
+		/**
+		 ** Default destructor.
+		 **/
 		virtual ~MainWindow();
-
-		virtual void setVisible(bool);
+		/**
+		 ** Set window visible.
+		 ** @param[in] on is visible
+		 **/
+		virtual void setVisible (bool on);
 	private slots:
-		void handleCurrentPathChanged (const QString & path);
+		void handleCurrentPathChanged (const QString& path);
 
 		void handleQuitAction ();
 		void handleScanAction ();
@@ -63,10 +77,10 @@ namespace gui
 		void handleAboutAction ();
 		void handleAboutQtAction ();
 
-		void handleError (const QString& path, const QString & error);
-		void handleDirectSubfolders (const QString & path, int cnt);
+		void handleError (const QString& path, const QString& error);
+		void handleDirectSubfolders (const QString& path, int cnt);
 		void handleCurrentScannedDir (const QString&, const QString&);
-		void handleFinished (const QString & path, const core::StatDataPtr & data);
+		void handleFinished (const QString& path, const core::StatDataPtr& data);
 	private:
 		Q_DISABLE_COPY (MainWindow);
 
@@ -80,7 +94,7 @@ namespace gui
 
 		void processSettingsData ();
 		void processScan (bool use_cache);
-		void processFinish (const QString & path, bool success, const QString & mess);
+		void processFinish (const QString& path, bool success, const QString& mess);
 		void clearStats ();
 
 		Ui::MainWindow ui;

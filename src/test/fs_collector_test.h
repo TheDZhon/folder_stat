@@ -29,14 +29,15 @@
 #define FS_COLLECTOR_TEST_H__
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
-	#pragma once
+#pragma once
 #endif
 
 #include "core/fs_collector.h"
 
 #include <QObject>
 
-namespace test {
+namespace test
+{
 	class CollectorTest: public QObject
 	{
 		Q_OBJECT
@@ -50,7 +51,7 @@ namespace test {
 		void initTestCase();
 		void cleanupTestCase();
 
-		void handleScanFinished (const QString & path, const core::StatDataPtr & ptr);
+		void handleScanFinished (const QString& path, const core::StatDataPtr& ptr);
 	signals:
 		void scanFinished ();
 	private:

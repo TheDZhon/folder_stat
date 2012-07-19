@@ -44,7 +44,7 @@ namespace
 
 	const size_t kTestFilesNumber = 100;
 
-	const test::iota_emulator_generator<size_t> iota_gen(0, 1);
+	const test::iota_emulator_generator<size_t> iota_gen (0, 1);
 }
 
 Q_DECLARE_METATYPE (QFileInfoList)
@@ -60,43 +60,41 @@ namespace test
 		StatData l;
 		StatData r;
 
-		l.collectFilesExts(expected_data);
-		r.collectFilesExts(expected_data);
+		l.collectFilesExts (expected_data);
+		r.collectFilesExts (expected_data);
 
 		QCOMPARE (l, r);
 
-		l.appendOther(r);
+		l.appendOther (r);
 
-		const StatData::ExtRecordsMap & l_rec_map = l.extRecords();
-		const StatData::ExtRecordsMap & r_rec_map = r.extRecords();
+		const StatData::ExtRecordsMap& l_rec_map = l.extRecords();
+		const StatData::ExtRecordsMap& r_rec_map = r.extRecords();
 		for (It it = l_rec_map.begin();
-			it != l_rec_map.end();
-			++it)
-		{
+			 it != l_rec_map.end();
+			 ++it) {
 			QCOMPARE (it->count_, r_rec_map[it.key()].count_ * 2);
 			QCOMPARE (it->total_size_, r_rec_map[it.key()].total_size_ * 2);
-		}	
+		}
 
 		QCOMPARE (l.all().count_, r.all().count_ * 2);
 		QCOMPARE (l.all().total_size_, r.all().total_size_ * 2);
 	}
 
-	void StatDataTest::testCollectFilesExts() 
+	void StatDataTest::testCollectFilesExts()
 	{
 		typedef StatData::ExtRecordsMap::const_iterator It;
 
 		QFETCH (QFileInfoList, expected_data);
 
 		StatData stat_obj;
-		
-		stat_obj.collectFilesExts(expected_data);
-		const StatData::ExtRecordsMap & rec_map = stat_obj.extRecords();
+
+		stat_obj.collectFilesExts (expected_data);
+		const StatData::ExtRecordsMap& rec_map = stat_obj.extRecords();
 
 		for (It it = rec_map.begin();
-			it != rec_map.end();
-			++it)
-		{
-			QCOMPARE (it->count_, static_cast<quint64>(it.key().toInt()));
+			 it != rec_map.end();
+			 ++it) {
+			QCOMPARE (it->count_, static_cast<quint64> (it.key().toInt()));
 			QCOMPARE (it->total_size_, it->count_ * kDefaultFileSz);
 		}
 	}
@@ -105,25 +103,25 @@ namespace test
 	{
 		qsrand (time (NULL));
 
-		mkPathInTemp(kTestFolderName);
+		mkPathInTemp (kTestFolderName);
 
-		SizeTVector v(kTestFilesNumber);
-		std::generate(v.begin(), v.end(), iota_gen);
+		SizeTVector v (kTestFilesNumber);
+		std::generate (v.begin(), v.end(), iota_gen);
 
-		test_files_ = createTestFiles(kTestFolderName, v);
+		test_files_ = createTestFiles (kTestFolderName, v);
 	}
 
 	void StatDataTest::cleanupTestCase()
 	{
-		rmPathInTempRecursive(kTestFolderName);
+		rmPathInTempRecursive (kTestFolderName);
 	}
 
 	void StatDataTest::prepareFiles() const
 	{
-		QTest::addColumn<QFileInfoList>("expected_data");
+		QTest::addColumn<QFileInfoList> ("expected_data");
 
-		QTest::newRow("empty") << QFileInfoList();
-		QTest::newRow("one") << (QFileInfoList() << test_files_.at(0));
-		QTest::newRow("all") << test_files_;
+		QTest::newRow ("empty") << QFileInfoList();
+		QTest::newRow ("one") << (QFileInfoList() << test_files_.at (0));
+		QTest::newRow ("all") << test_files_;
 	}
 }

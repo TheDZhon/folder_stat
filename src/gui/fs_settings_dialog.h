@@ -38,29 +38,57 @@
 
 namespace gui
 {
+	/**
+	 ** Settings POD structure.
+	 ** Represents all options available in settings dialog.
+	 ** @sa SettingsDialog
+	 **/
 	struct SettingsData {
-		bool exit_confirmation_;
+		bool exit_confirmation_;       /**< Show exit confirmation on main window closing */
 
-		bool show_tray_icon_;
-		bool allow_minimize_to_tray_;
-		bool show_tray_notifications_;
-		size_t notification_timeout_;
+		bool show_tray_icon_;          /**< Show icon in system tray */
+		bool allow_minimize_to_tray_;  /**< Allow main window minimization to system tray */
+		bool show_tray_notifications_; /**< Show system tray notifications */
+		size_t notification_timeout_;  /**< Timeout for notification in system tray */
 
-		bool use_cache_;
-		size_t max_cache_items_;
+		bool use_cache_;               /**< Use cache for collecting statistics */
+		size_t max_cache_items_;       /**< Max items in cache (cache capacity) */
 	};
-
+	/**
+	 ** Settings dialog widget.
+	 ** UI for settings modifications.
+	 ** @sa SettingsData
+	 **/
 	class SettingsDialog : public QDialog
 	{
 		Q_OBJECT
 	public:
+		/**
+		 ** Default QObject-style constructor.
+		 ** @param[in] parent parent object
+		 **/
 		SettingsDialog (QWidget* parent = 0);
+		/**
+		 ** Destructor.
+		 **/
 		virtual ~SettingsDialog();
-
-		void setSettings (const SettingsData& s) { settings_data_ = s; }
+		/**
+		 ** Set settings data structure.
+		 ** @param[in] settings_data settings data
+		 **/
+		void setSettings (const SettingsData& settings_data) { settings_data_ = settings_data; }
+		/**
+		 ** Get settings data structure.
+		 ** @return current settings
+		 **/
 		inline SettingsData settings () const { return settings_data_; }
-
+		/**
+		 ** Load settings data from system storage (platform-dependent).
+		 **/
 		void loadState ();
+		/**
+		 ** Save settings data in system storage (platform-dependent).
+		 **/
 		void saveState () const;
 	private slots:
 		void handleGeneral ();

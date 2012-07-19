@@ -39,34 +39,94 @@
 
 namespace gui
 {
+	/**
+	 ** Statistics table model.
+	 ** Integrates statistics data into table view.
+	 ** @sa StatTableWidget
+	 **/
 	class StatTableModel:
 		public QAbstractTableModel
 	{
 		Q_OBJECT
 	public:
+		/**
+		 ** Default QObject-style constructor.
+		 ** @param[in] parent parent object
+		 **/
 		StatTableModel (QObject* parent = 0);
+		/**
+		 ** Destructor.
+		 **/
 		virtual ~StatTableModel();
-
+		/**
+		 ** Set new data.
+		 ** Table model refreshes all data in the associated view.
+		 ** @param[in] data new data
+		 **/
 		void setData (const core::StatDataPtr& data);
+		/**
+		 ** Clear data.
+		 ** Associated view becomes empty.
+		 **/
 		void clearData ();
-
-		virtual int rowCount (const QModelIndex& parent) const;
-		virtual int columnCount (const QModelIndex& parent) const;
-		virtual QVariant data (const QModelIndex& index, int role) const;
-
+		/**
+		 ** Get row count.
+		 ** Reimplemented from base.
+		 ** @param[in] parent unused parameter
+		 ** @return row count
+		 **/
+		virtual int rowCount (const QModelIndex& parent = QModelIndex()) const;
+		/**
+		 ** Get column count.
+		 ** Reimplemented from base.
+		 ** @param[in] parent unused parameter
+		 ** @return column count
+		 **/
+		virtual int columnCount (const QModelIndex& parent = QModelIndex()) const;
+		/**
+		 ** Get data for given index.
+		 ** Reimplemented from base.
+		 ** @param[in] index index object
+		 ** @param[in] role index display role
+		 ** @return data for display in cell
+		 **/
+		virtual QVariant data (const QModelIndex& index = QModelIndex(), int role = Qt::DisplayRole) const;
+		/**
+		 ** Get headers data (titles).
+		 ** @param[in]
+		 **/
 		virtual QVariant headerData (int section, Qt::Orientation, int role) const;
 	private:
 		core::StatData::ExtRecordsMap data_;
 	};
-
+	/**
+	 ** Statistics table widget.
+	 **/
 	class StatTableWidget: public QTableView
 	{
 		Q_OBJECT
 	public:
+		/**
+		 ** Default QObject-style constructor.
+		 ** @param[in] parent parent object
+		 **/
 		StatTableWidget (QWidget* parent);
+		/**
+		 ** Destructor.
+		 **/
 		virtual ~StatTableWidget();
 	public slots:
-		inline void setData (const QString& path, const core::StatDataPtr& data) { model_.setData(data); }
+		/**
+		 ** Set new statistics data for display.
+		 ** Translates call to underlying model.
+		 ** @param[in] path scanned path
+		 ** @param[in] data collected data
+		 **/
+		inline void setData (const QString& path, const core::StatDataPtr& data) { model_.setData (data); }
+		/**
+		 ** Clear displaying data.
+		 ** Translates call to underlying model.
+		 **/
 		inline void clearData () { model_.clearData(); }
 	private:
 		StatTableModel model_;

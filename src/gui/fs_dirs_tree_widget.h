@@ -40,18 +40,43 @@
 
 namespace gui
 {
+	/**
+	 ** Tree widget with filesystem structure.
+	 ** Based on QTreeView and QFileSystemModel.
+	 ** @sa LightweightIconProvider
+	 **/
 	class DirsTreeWidget: public QTreeView
 	{
 		Q_OBJECT
 	public:
+		/**
+		 ** Default QObject-style constructor.
+		 ** @param[in] parent parent object
+		 **/
 		DirsTreeWidget (QWidget* parent = 0);
+		/**
+		 ** Destructor.
+		 **/
 		virtual ~DirsTreeWidget();
-
+		/**
+		 ** Get current filepath.
+		 ** @return filepath
+		 **/
 		QString currentFilePath() const;
 	signals:
+		/**
+		 ** Report new current path.
+		 ** @param[in] path new current path
+		 **/
 		void currentPathChanged (const QString& path) const;
 	protected:
-		void currentChanged(const QModelIndex &current, const QModelIndex &previous);
+		/**
+		 ** Report new current index.
+		 ** Reimplemented from base.
+		 ** @param[in] current new current index
+		 ** @param[in] previous old current index
+		 **/
+		void currentChanged (const QModelIndex& current, const QModelIndex& previous);
 	private slots:
 		void handleContextMenu (const QPoint& p) const;
 	private:

@@ -53,15 +53,15 @@ namespace test
 		const size_t kMaxSz = 10;
 		const size_t kElems = 100;
 
-		cacher.setMaxSize(10);
-		
+		cacher.setMaxSize (10);
+
 		const QString test_item = ("test_item");
-		cacher.store(test_item, StatDataPtr(new StatData));
-		QVERIFY (!cacher.get(test_item).isNull());
+		cacher.store (test_item, StatDataPtr (new StatData));
+		QVERIFY (!cacher.get (test_item).isNull());
 
-		for (unsigned i = 1; i < kElems; ++i) { cacher.store(QString::number(i), StatDataPtr(new StatData)); }
+		for (unsigned i = 1; i < kElems; ++i) { cacher.store (QString::number (i), StatDataPtr (new StatData)); }
 
-		QVERIFY (cacher.get(test_item).isNull());
+		QVERIFY (cacher.get (test_item).isNull());
 	}
 
 	void CacherTest::testInvalidate()

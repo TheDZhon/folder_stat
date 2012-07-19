@@ -102,16 +102,16 @@ namespace gui
 
 	void MainWindow::handleCancelAction()
 	{
-		notifier_.trayMessage(tr("Cancel requested"));
+		notifier_.trayMessage (tr ("Cancel requested"));
 
-		ui.cancelCollectAction->setDisabled(true);
+		ui.cancelCollectAction->setDisabled (true);
 		collector_.cancel();
 	}
 
 	void MainWindow::handleSettingsAction()
 	{
 		SettingsDialog settings_dialog;
-		settings_dialog.setSettings(settings_data_);
+		settings_dialog.setSettings (settings_data_);
 
 		const int exit_status = settings_dialog.exec();
 		if (exit_status == QDialog::Rejected) { return; }
@@ -315,7 +315,7 @@ namespace gui
 		isBusy_ = true;
 	}
 
-	void MainWindow::processFinish (const QString & path, bool success, const QString& mess)
+	void MainWindow::processFinish (const QString& path, bool success, const QString& mess)
 	{
 		notifier_.setBusy (false);
 

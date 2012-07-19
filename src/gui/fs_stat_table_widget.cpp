@@ -43,23 +43,23 @@ namespace
 		kColumnsCnt
 	};
 
-	const char* kEmptyExtension = QT_TRANSLATE_NOOP("gui::StatTableModel", "<None>");
-	const char* kAllFiles = QT_TRANSLATE_NOOP("gui::StatTableModel", "<All files>");
+	const char* kEmptyExtension = QT_TRANSLATE_NOOP ("gui::StatTableModel", "<None>");
+	const char* kAllFiles = QT_TRANSLATE_NOOP ("gui::StatTableModel", "<All files>");
 
 	const char* kColumnnames [] = {
-		QT_TRANSLATE_NOOP("gui::StatTableModel", "Extension"),
-		QT_TRANSLATE_NOOP("gui::StatTableModel", "Count"),
-		QT_TRANSLATE_NOOP("gui::StatTableModel", "Total size"),
-		QT_TRANSLATE_NOOP("gui::StatTableModel", "Average size")
+		QT_TRANSLATE_NOOP ("gui::StatTableModel", "Extension"),
+		QT_TRANSLATE_NOOP ("gui::StatTableModel", "Count"),
+		QT_TRANSLATE_NOOP ("gui::StatTableModel", "Total size"),
+		QT_TRANSLATE_NOOP ("gui::StatTableModel", "Average size")
 	};
 
 	const char* kSizesSuffixes [] = {
-		QT_TRANSLATE_NOOP("gui::StatTableModel", "B"),
-		QT_TRANSLATE_NOOP("gui::StatTableModel", "KB"),
-		QT_TRANSLATE_NOOP("gui::StatTableModel", "MB"),
-		QT_TRANSLATE_NOOP("gui::StatTableModel", "GB"),
-		QT_TRANSLATE_NOOP("gui::StatTableModel", "TB"),
-		QT_TRANSLATE_NOOP("gui::StatTableModel", "EB")
+		QT_TRANSLATE_NOOP ("gui::StatTableModel", "B"),
+		QT_TRANSLATE_NOOP ("gui::StatTableModel", "KB"),
+		QT_TRANSLATE_NOOP ("gui::StatTableModel", "MB"),
+		QT_TRANSLATE_NOOP ("gui::StatTableModel", "GB"),
+		QT_TRANSLATE_NOOP ("gui::StatTableModel", "TB"),
+		QT_TRANSLATE_NOOP ("gui::StatTableModel", "EB")
 	};
 
 	const double kOrderLimit = 1024.;
@@ -72,7 +72,7 @@ QString humanReadableSize (double sz)
 		sz /= kOrderLimit;
 		++ind;
 	}
-	return QString ("%1 %2").arg (sz, 0, 'f', 2).arg (gui::StatTableModel::tr(kSizesSuffixes[ind]));
+	return QString ("%1 %2").arg (sz, 0, 'f', 2).arg (gui::StatTableModel::tr (kSizesSuffixes[ind]));
 }
 
 namespace gui
@@ -121,7 +121,7 @@ namespace gui
 			switch (col) {
 				case kExtension: {
 					const QString& ext = it.key();
-					return ext.isEmpty() ? tr(kEmptyExtension) : ext;
+					return ext.isEmpty() ? tr (kEmptyExtension) : ext;
 				}
 				case kCount: return it->count_;
 				case kTotalSize: return humanReadableSize (it->total_size_);
@@ -151,7 +151,7 @@ namespace gui
 		beginResetModel();
 
 		data_ = stat_data->extRecords();
-		data_[tr(kAllFiles)] = stat_data->all();
+		data_[tr (kAllFiles)] = stat_data->all();
 
 		endResetModel();
 	}

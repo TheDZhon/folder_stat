@@ -70,12 +70,12 @@ namespace test
 
 		Collector collector;
 
-		connect (&collector, 
-			SIGNAL (finished (const QString&, const core::StatDataPtr&)),
-			SLOT (handleScanFinished(const QString&, const core::StatDataPtr&)));
+		connect (&collector,
+				 SIGNAL (finished (const QString&, const core::StatDataPtr&)),
+				 SLOT (handleScanFinished (const QString&, const core::StatDataPtr&)));
 
-		collector.collect(QDir::tempPath() + "/" + path, false);
-		QVERIFY(waitForSignal(this, SIGNAL (scanFinished()), 10000));
+		collector.collect (QDir::tempPath() + "/" + path, false);
+		QVERIFY (waitForSignal (this, SIGNAL (scanFinished()), 10000));
 
 		QVERIFY (!current_stat_.isNull());
 
@@ -86,10 +86,10 @@ namespace test
 	{
 		Collector collector;
 
-		collector.collect(QDir::rootPath(), false);
+		collector.collect (QDir::rootPath(), false);
 		collector.cancel();
 
-		QVERIFY(waitForSignal(&collector, SIGNAL (error(const QString&, const QString&)), 10000));
+		QVERIFY (waitForSignal (&collector, SIGNAL (error (const QString&, const QString&)), 10000));
 	}
 
 	void CollectorTest::initTestCase()
@@ -116,35 +116,35 @@ namespace test
 		const size_t common_dirs_cnt = pos_rand_f ();
 		const size_t common_files_cnt_1 = pos_rand_f ();
 		const size_t common_files_cnt_2 = pos_rand_f ();
-		
+
 		SizeTVector common_files_cnt_list_1 (common_files_cnt_1);
 		SizeTVector common_files_cnt_list_2 (common_files_cnt_2);
-		
+
 		std::generate (common_files_cnt_list_1.begin(), common_files_cnt_list_1.end(), pos_rand_f);
 		std::generate (common_files_cnt_list_2.begin(), common_files_cnt_list_2.end(), pos_rand_f);
 
-		const QFileInfoList & common_level_dirs_1 = createTestSubdirs(kCommonPath, common_dirs_cnt);
-		const QFileInfoList & common_level_files_1 = createTestFiles(kCommonPath, common_files_cnt_list_1);
-		const QFileInfoList & common_level_files_2 = createTestFiles(kCommonPath + "/0", common_files_cnt_list_2);
+		const QFileInfoList& common_level_dirs_1 = createTestSubdirs (kCommonPath, common_dirs_cnt);
+		const QFileInfoList& common_level_files_1 = createTestFiles (kCommonPath, common_files_cnt_list_1);
+		const QFileInfoList& common_level_files_2 = createTestFiles (kCommonPath + "/0", common_files_cnt_list_2);
 
 		//
 
 		expected_stats_[kCleanPath] = StatDataPtr (new StatData);
 
 		StatDataPtr single_stat_data_ptr (new StatData);
-		single_stat_data_ptr->collectFilesExts(single_file_info_list);
+		single_stat_data_ptr->collectFilesExts (single_file_info_list);
 		expected_stats_[kSingleFilePath] = StatDataPtr (single_stat_data_ptr);
 
 		StatDataPtr nested_clean_stat (new StatData);
 		expected_stats_[kNestedCleanPath] = nested_clean_stat;
 
 		StatDataPtr one_level_stat (new StatData);
-		one_level_stat->collectFilesExts(one_level_files);
+		one_level_stat->collectFilesExts (one_level_files);
 		expected_stats_[kOneLevelPath] = one_level_stat;
 
 		StatDataPtr common_stat (new StatData);
-		common_stat->collectFilesExts(common_level_files_1);
-		common_stat->collectFilesExts(common_level_files_2);
+		common_stat->collectFilesExts (common_level_files_1);
+		common_stat->collectFilesExts (common_level_files_2);
 		expected_stats_[kCommonPath] = common_stat;
 	}
 
@@ -153,7 +153,7 @@ namespace test
 		std::for_each (kAllPaths.begin(), kAllPaths.end(), &rmPathInTempRecursive);
 	}
 
-	void CollectorTest::handleScanFinished(const QString & path, const core::StatDataPtr & ptr)
+	void CollectorTest::handleScanFinished (const QString& path, const core::StatDataPtr& ptr)
 	{
 		current_stat_ = ptr;
 
@@ -162,7 +162,7 @@ namespace test
 
 	void CollectorTest::prepareData() const
 	{
-		QTest::addColumn<QString>("path");
+		QTest::addColumn<QString> ("path");
 		QTest::addColumn<StatDataPtr> ("expected_stat_data");
 
 		QTest::newRow (kCleanPath.toAscii().constData()) << kCleanPath << expected_stats_[kCleanPath];
