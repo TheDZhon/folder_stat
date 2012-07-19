@@ -27,7 +27,7 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="gui::DirsTreeView" name="treeView">
+      <widget class="gui::DirsTreeWidget" name="treeView">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>3</horstretch>
@@ -56,21 +56,40 @@
        <property name="flat">
         <bool>false</bool>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Direct children directories:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="childrenCntSpinBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="maximum">
+             <number>999999999</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
         <item>
          <widget class="QSplitter" name="splitter">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
-          <widget class="QColumnView" name="columnView">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>2</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-          <widget class="QTableView" name="tableView">
+          <widget class="gui::StatTableWidget" name="tableView">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -140,10 +159,11 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="scanAction"/>
    <addaction name="refreshAction"/>
+   <addaction name="separator"/>
    <addaction name="cancelCollectAction"/>
    <addaction name="separator"/>
-   <addaction name="clearCacheAction"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="settingsAction">
@@ -177,7 +197,7 @@
   </action>
   <action name="refreshAction">
    <property name="checkable">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="enabled">
     <bool>false</bool>
@@ -228,7 +248,7 @@
   </action>
   <action name="cancelCollectAction">
    <property name="checkable">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="enabled">
     <bool>false</bool>
@@ -241,13 +261,30 @@
     <string>Cancel collect</string>
    </property>
   </action>
+  <action name="scanAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/fs_main_window.qrc">
+     <normaloff>:/icons/scan</normaloff>:/icons/scan</iconset>
+   </property>
+   <property name="text">
+    <string>Scan</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>gui::DirsTreeView</class>
+   <class>gui::DirsTreeWidget</class>
    <extends>QTreeView</extends>
-   <header>fs_dirs_tree_view.h</header>
+   <header>fs_dirs_tree_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>gui::StatTableWidget</class>
+   <extends>QTableView</extends>
+   <header>fs_stat_table_widget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

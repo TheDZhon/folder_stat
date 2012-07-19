@@ -25,42 +25,52 @@
 //    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
-#ifndef FS_DIRS_TREE_VIEW__
-#define FS_DIRS_TREE_VIEW__
+#ifndef FS_STAT_TABLE_WIDGET_H__
+#define FS_STAT_TABLE_WIDGET_H__
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
 #pragma once
 #endif
 
-#include "fs_lightweight_icon_provider.h"
+#include "core/fs_stat_data.h"
 
-#include <QTreeView>
-#include <QFileSystemModel>
-#include <QMenu>
+#include <QAbstractTableModel>
+#include <QTableView>
 
 namespace gui
 {
-	class DirsTreeView: public QTreeView
+	class StatTableModel:
+		public QAbstractTableModel
 	{
 		Q_OBJECT
 	public:
-		DirsTreeView (QWidget* parent = 0);
-		virtual ~DirsTreeView();
-	signals:
-		void scanRequest (const QString& path) const;
-	private slots:
-		void handleContextMenu (const QPoint& p);
-		void handleScanAction () const;
+		StatTableModel (QObject* parent = 0);
+		virtual ~StatTableModel();
+
+		void setData (const core::StatDataPtr& data);
+		void clearData ();
+
+		virtual int rowCount (const QModelIndex& parent) const;
+		virtual int columnCount (const QModelIndex& parent) const;
+		virtual QVariant data (const QModelIndex& index, int role) const;
+
+		virtual QVariant headerData (int section, Qt::Orientation, int role) const;
 	private:
-		Q_DISABLE_COPY (DirsTreeView);
+		core::StatData::ExtRecordsMap data_;
+	};
 
-		void initModel();
-		void initView();
-		void initContextMenu();
-
-		QFileSystemModel model_;
-		QMenu contextMenu_;
+	class StatTableWidget: public QTableView
+	{
+		Q_OBJECT
+	public:
+		StatTableWidget (QWidget* parent);
+		virtual ~StatTableWidget();
+	public slots:
+		inline void setData (const QString& path, const core::StatDataPtr& data) { model_.setData(data); }
+		inline void clearData () { model_.clearData(); }
+	private:
+		StatTableModel model_;
 	};
 }
 
-#endif // FS_DIRS_TREE_VIEW__
+#endif // FS_STAT_TABLE_WIDGET_H__

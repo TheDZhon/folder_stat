@@ -25,39 +25,85 @@
 //    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
-#ifndef FS_STAT_TABLE_MODEL_H__
-#define FS_STAT_TABLE_MODEL_H__
+#include "fs_dirs_tree_widget.h"
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
-#pragma once
-#endif
+#include "fs_lightweight_icon_provider.h"
 
-#include "core/fs_stat_data.h"
-
-#include <QAbstractTableModel>
-
-namespace gui {
-	class StatTableModel:
-		public QAbstractTableModel
-	{
-		Q_OBJECT
-	public:
-		StatTableModel (QObject * parent = 0);
-		virtual ~StatTableModel();
-	public slots:
-		void clear ();
-	public:
-		virtual int rowCount (const QModelIndex & parent) const;
-		virtual int columnCount (const QModelIndex & parent) const;
-		virtual QVariant data (const QModelIndex& index, int role) const;
-
-		virtual QVariant headerData (int section, Qt::Orientation, int role) const;
-	public slots:
-		void handleNewData (const QString& path, const core::StatDataPtr& data);
-	private:
-		QString path_;
-		core::StatData::ExtRecordsMap data_;
-	};
+namespace
+{
+	enum { kTreeViewSizeColumn = 1,
+		   kTreeViewTypeColumn = 2,
+		   kTreeViewDateColumn = 3
+		 };
 }
 
-#endif // FS_STAT_TABLE_MODEL_H__
+namespace gui
+{
+	DirsTreeWidget::DirsTreeWidget (QWidget* parent /* = 0 */) :
+		QTreeView (parent),
+		model_()
+	{
+		initModel();
+		initView();
+		initContextMenu();
+	}
+
+	DirsTreeWidget::~DirsTreeWidget () {}
+
+	QString DirsTreeWidget::currentFilePath() const 
+	{
+		if (currentIndex().isValid()) {
+			return model_.filePath(currentIndex());
+		}
+		return QString();
+	}
+
+	void DirsTreeWidget::currentChanged(const QModelIndex &current, const QModelIndex &previous)
+	{
+		QTreeView::currentChanged(current, previous);
+		if (current.isValid()) {
+			const QString & path = model_.filePath(current);
+			emit currentPathChanged(path);
+		}
+	}
+
+	void DirsTreeWidget::handleContextMenu (const QPoint& p) const
+	{
+		const QModelIndex& ind = indexAt (p);
+		if (ind.isValid()) {
+			QMenu contextMenu;
+			contextMenu.addActions (actions());
+
+			contextMenu.exec (mapToGlobal (p));
+		}
+	}
+
+	void DirsTreeWidget::initModel()
+	{
+		model_.setIconProvider (new LightweightIconProvider);
+		model_.setRootPath (QDir::currentPath());
+		model_.setFilter (QDir::AllDirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+
+		model_.removeColumn (kTreeViewSizeColumn);
+		model_.removeColumn (kTreeViewTypeColumn);
+		model_.removeColumn (kTreeViewDateColumn);
+	}
+
+	void DirsTreeWidget::initView()
+	{
+		setModel (&model_);
+		setUniformRowHeights (true);
+		setContextMenuPolicy (Qt::CustomContextMenu);
+
+		hideColumn (kTreeViewSizeColumn);
+		hideColumn (kTreeViewTypeColumn);
+		hideColumn (kTreeViewDateColumn);
+	}
+
+	void DirsTreeWidget::initContextMenu()
+	{
+		connect (this,
+				 SIGNAL (customContextMenuRequested (const QPoint&)),
+				 SLOT (handleContextMenu (const QPoint&)));
+	}
+}
