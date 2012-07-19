@@ -63,7 +63,7 @@ namespace gui
 		 ** Set settings for notifications.
 		 ** @param[in] settings_data settings
 		 **/
-		void setSettingsData (const SettingsData& settings_data) { settings_data_ = settings_data; }
+		void setSettingsData (const SettingsData& settings_data);
 		/**
 		 ** Show status message (in status bar at this moment).
 		 ** @param[in] mess message

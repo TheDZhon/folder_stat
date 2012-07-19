@@ -58,6 +58,12 @@ namespace gui
 		progressbar_.setParent (0);
 	}
 
+	void Notifier::setSettingsData (const SettingsData& settings_data)
+	{
+		settings_data_ = settings_data;
+		tray_icon_.setVisible(settings_data_.show_tray_icon_);
+	}
+
 	void Notifier::statusMessage (const QString& mess)
 	{
 		status_bar_->showMessage (tr (kStatusMessage) + ": " + mess);
@@ -95,7 +101,6 @@ namespace gui
 	{
 		QMainWindow* window = qobject_cast<QMainWindow*> (parent());
 		tray_icon_.setIcon (window->windowIcon());
-		tray_icon_.show();
 		progressbar_.setRange (0, 0);
 
 		status_bar_ = window->statusBar();
