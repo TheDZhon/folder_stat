@@ -29,12 +29,13 @@
 
 #include <QDir>
 #include <QFileInfo>
+#include <QRunnable>
 
 namespace
 {
-	const QString kNotExists = QObject::tr ("invalid path");
-	const QString kNotADir = QObject::tr ("not a directory");
-	const QString kCanceled = QObject::tr ("canceled");
+	const char * kNotExists = QT_TR_NOOP ("Invalid path");
+	const char * kNotADir = QT_TR_NOOP ("Not a directory");
+	const char * kCanceled = QT_TR_NOOP ("Canceled");
 
 	const QDir::Filters kCommonFilters = QDir::Readable
 										 | QDir::Hidden
@@ -48,19 +49,28 @@ namespace
 
 namespace core
 {
+	class TerminatorTask: public QRunnable
+	{
+		void run () {
+			QThreadPool::globalInstance()->waitForDone();
+		}
+	};
+
 	struct Collector::mapper:
 			std::unary_function<const QFileInfo&, StatDataPtr> {
 
-		mapper (Collector* c) :
-			collector_ (c) { Q_ASSERT (c); }
+		mapper (const QString& path, Collector* c, bool use_cache) :
+			path_ (path), collector_ (c), use_cache_(use_cache) { Q_ASSERT (c); }
 
 		StatDataPtr operator() (const QFileInfo& finfo) {
 			Q_ASSERT (finfo.isDir());
 
-			return collector_->collectImplAux (finfo);
+			return collector_->collectImplAux (path_, finfo, use_cache_);
 		}
 
+		QString path_;
 		Collector* collector_;
+		bool use_cache_;
 	};
 
 	struct Collector::reducer :
@@ -78,38 +88,47 @@ namespace core
 
 	Collector::Collector (QObject* parent /*= NULL*/) :
 		QObject (parent),
-		cache_enabled_(),
 		cacher_(),
-		terminator_ (kWork)
-	{}
+		terminator_flag_ (kWork),
+		terminator_pool_()
+	{
+		terminator_pool_.reserveThread();
+	}
 
 	Collector::~Collector ()
 	{
-		cancel();
-		QThreadPool::globalInstance()->waitForDone();
+		cancel ();
 	}
 
-	void Collector::collectImpl (const QString& path)
+	void Collector::cancel()
 	{
-		terminator_ = kWork;
+		terminator_flag_ = kTerminate;
+		terminator_pool_.start (new TerminatorTask, QThread::HighestPriority);
+	}
+
+	void Collector::collectImpl (const QString& path, bool use_cache)
+	{
+		terminator_flag_ = kWork;
 
 		const QString& canonPath = QFileInfo (path).canonicalFilePath();
 		const QFileInfo pathInfo (canonPath);
 
-		if (!pathInfo.exists()) { emit error (path, kNotExists); return; }
-		if (!pathInfo.isDir()) { emit error (path, kNotADir); return; }
+		if (!pathInfo.exists()) { emit error (path, tr(kNotExists)); return; }
+		if (!pathInfo.isDir()) { emit error (path, tr(kNotADir)); return; }
 
-		StatDataPtr full_answer = collectImplAux (pathInfo);
+		emit directSubfolders (path, getSubdirs (pathInfo).size());
 
-		if (terminator_ == kTerminate) {
-			emit error (path, kCanceled);
+		StatDataPtr full_answer = collectImplAux (path, pathInfo, use_cache);
+
+		if (terminator_flag_ == kTerminate) {
+			emit error (path, tr(kCanceled));
 			cacher_.clear();
 		} else {
 			emit finished (path, full_answer);
 		}
 	}
 
-	StatDataPtr Collector::collectImplAux (const QFileInfo& pinfo)
+	StatDataPtr Collector::collectImplAux (const QString& path, const QFileInfo& pinfo, bool use_cache)
 	{
 		typedef QFileInfoList::iterator It;
 
@@ -117,10 +136,9 @@ namespace core
 
 		const QString& cpath = pinfo.canonicalFilePath();
 
-		if (cache_enabled_) {
+		if (use_cache) {
 			const StatDataPtr& from_cache = cacher_.get (cpath);
 			if (!from_cache.isNull()) {
-				emit dirsCollected (pinfo.path(), from_cache->subdirs());
 				return from_cache;
 			}
 		}
@@ -128,16 +146,16 @@ namespace core
 		StatDataPtr answer (new StatData);
 
 		const QFileInfoList& subdirs = getSubdirs (pinfo);
-		emit dirsCollected (pinfo.path(), subdirs);
+		emit currentScannedDir (path, pinfo.canonicalPath());
 
 		const QFileInfoList& files = getFiles (pinfo);
 
 		answer->setSubdirs (subdirs);
 		answer->collectFilesExts (files);
 
-		if (terminator_ != kTerminate) {
-			async::blockingMappedReduced<StatDataPtr> (subdirs, mapper (this), reducer (answer));
-			if (cache_enabled_) { cacher_.store (pinfo.canonicalFilePath(), answer); }
+		if (terminator_flag_ != kTerminate) {
+			async::blockingMappedReduced<StatDataPtr> (subdirs, mapper (path, this, use_cache), reducer (answer));
+			if (use_cache) { cacher_.store (pinfo.canonicalFilePath(), answer); }
 		}
 
 		return answer;

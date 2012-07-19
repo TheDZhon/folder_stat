@@ -37,6 +37,7 @@
 #include <QObject>
 #include <QtCore>
 #include <QSharedPointer>
+#include <QThreadPool>
 #include <QAtomicInt>
 
 namespace async = QtConcurrent;
@@ -50,16 +51,12 @@ namespace core
 		Collector (QObject* parent = NULL);
 		virtual ~Collector ();
 	public slots:
-		inline void collect (const QString& path) {
-			async::run (this, &Collector::collectImpl, path);
+		inline void collect (const QString& path, bool use_cache) {
+			async::run (this, &Collector::collectImpl, path, use_cache);
 		}
-		inline void cancel () {
-			terminator_ = kTerminate; // lightweight
-		}
-		inline void setCacheEnabled (bool on = true) {
-			cache_enabled_ = on;
-			if (!on) { clearCache(); }
-		}
+		
+		void cancel ();
+
 		inline void setCacheSize (size_t sz) {
 			async::run (&cacher_, &Cacher::setMaxSize, sz);
 		}
@@ -68,8 +65,11 @@ namespace core
 		}
 	signals:
 		void error (const QString&, const QString&) const;
-		void dirsCollected (const QString&, const QFileInfoList&) const;
+		void directSubfolders (const QString&, int cnt) const;
+		void currentScannedDir (const QString&, const QString&) const;
 		void finished (const QString&, const core::StatDataPtr&) const;
+	private slots:
+
 	private:
 		struct mapper;
 		struct reducer;
@@ -84,16 +84,16 @@ namespace core
 
 		Q_DISABLE_COPY (Collector);
 
-		void collectImpl (const QString& path);
-		StatDataPtr collectImplAux (const QFileInfo& pinfo);
+		void collectImpl (const QString& path, bool use_cache);
+		StatDataPtr collectImplAux (const QString& path, const QFileInfo& pinfo, bool use_cache);
 
 		QFileInfoList getSubdirs (const QFileInfo& f) const;
 		QFileInfoList getFiles (const QFileInfo& f) const;
 
-		bool cache_enabled_;
 		Cacher cacher_;
 
-		QAtomicInt terminator_;
+		QAtomicInt terminator_flag_;
+		QThreadPool terminator_pool_;
 	};
 }
 
