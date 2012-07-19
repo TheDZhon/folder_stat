@@ -49,8 +49,8 @@ namespace gui
 	MainWindow::MainWindow (QWidget* parent, Qt::WFlags flags)
 		: QMainWindow (parent, flags),
 		  ui(),
-		  settings_dialog_(),
-		  settings_data_ (settings_dialog_.settings()),
+		  isBusy_ (false),
+		  settings_data_ (SettingsDialog().settings()),
 		  collector_(),
 		  notifier_ (this)
 	{
@@ -78,14 +78,14 @@ namespace gui
 
 	void MainWindow::handleCurrentPathChanged (const QString& path)
 	{
-		ui.scanAction->setEnabled (true);
-		ui.refreshAction->setEnabled (false);
+		if (!isBusy_) {
+			ui.scanAction->setEnabled (true);
+			ui.refreshAction->setEnabled (false);
+		}
 	}
 
 	void MainWindow::handleQuitAction()
 	{
-		settings_dialog_.setSettings (settings_data_);
-		settings_dialog_.saveState();
 		saveWindowState();
 		qApp->quit();
 	}
@@ -100,13 +100,21 @@ namespace gui
 		processScan (false);
 	}
 
+	void MainWindow::handleCancelAction()
+	{
+		ui.cancelCollectAction->setDisabled(true);
+		collector_.cancel();
+	}
+
 	void MainWindow::handleSettingsAction()
 	{
-		const int exit_status = settings_dialog_.exec();
+		SettingsDialog settings_dialog;
+		settings_dialog.setSettings(settings_data_);
+
+		const int exit_status = settings_dialog.exec();
 		if (exit_status == QDialog::Rejected) { return; }
 
-		settings_data_ = settings_dialog_.settings();
-		settings_dialog_.saveState();
+		settings_data_ = settings_dialog.settings();
 
 		processSettingsData();
 	}
@@ -123,7 +131,7 @@ namespace gui
 
 	void MainWindow::handleError (const QString& path, const QString& error)
 	{
-		processFinish (false, error);
+		processFinish (path, false, error);
 	}
 
 	void MainWindow::handleDirectSubfolders (const QString& path, int cnt)
@@ -147,7 +155,7 @@ namespace gui
 	{
 		ui.tableView->setData (path, ptr);
 
-		processFinish (true, tr("Task finished successfully"));
+		processFinish (path, true, tr ("Task finished successfully"));
 	}
 
 	void MainWindow::configureUi()
@@ -186,8 +194,7 @@ namespace gui
 				 SLOT (handleRefreshAction()));
 		connect (ui.cancelCollectAction,
 				 SIGNAL (triggered()),
-				 &collector_,
-				 SLOT (cancel()));
+				 SLOT (handleCancelAction()));
 		connect (ui.clearCacheAction,
 				 SIGNAL (triggered()),
 				 &collector_,
@@ -246,7 +253,7 @@ namespace gui
 		}
 
 		if (confirmMsgBox.clickedButton() == hideButton) {
-			if (settings_data_.show_notifications_) {
+			if (settings_data_.show_tray_notifications_) {
 				notifier_.trayMessage (tr ("The program will keep running in the "
 										   "system tray. To terminate the program, "
 										   "choose \"Quit\" in the context menu "));
@@ -289,6 +296,8 @@ namespace gui
 
 	void MainWindow::processScan (bool use_cache)
 	{
+		clearStats();
+
 		ui.cancelCollectAction->setEnabled (true);
 		ui.scanAction->setDisabled (true);
 		ui.refreshAction->setDisabled (true);
@@ -300,16 +309,20 @@ namespace gui
 		notifier_.setBusy (true);
 
 		collector_.collect (path, use_cache);
+
+		isBusy_ = true;
 	}
 
-	void MainWindow::processFinish (bool success, const QString& mess)
+	void MainWindow::processFinish (const QString & path, bool success, const QString& mess)
 	{
 		notifier_.setBusy (false);
 
-		const QString& path = ui.treeView->currentFilePath();
+		const QString& current_path = ui.treeView->currentFilePath();
 
-		ui.scanAction->setDisabled (success);
-		ui.refreshAction->setEnabled (success);
+		const bool path_is_same = (current_path == path);
+
+		ui.scanAction->setDisabled (success && path_is_same);
+		ui.refreshAction->setEnabled (success && path_is_same);
 		ui.cancelCollectAction->setDisabled (true);
 
 		if (success) {
@@ -320,6 +333,8 @@ namespace gui
 		}
 
 		if (!success) { clearStats(); }
+
+		isBusy_ = false;
 	}
 
 	void MainWindow::clearStats()

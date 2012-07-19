@@ -47,32 +47,10 @@ namespace
 	const test::iota_emulator_generator<size_t> iota_gen(0, 1);
 }
 
+Q_DECLARE_METATYPE (QFileInfoList)
+
 namespace test
 {
-	void StatDataTest::testSetAndGetSubdirs_data() const
-	{
-		QTest::addColumn<QFileInfoList> ("dirs");
-
-		QTest::newRow ("empty") << QFileInfoList();
-		QTest::newRow ("one") << (QFileInfoList() << QFileInfo ("."));
-		QTest::newRow ("common") << (QFileInfoList()
-									 << QFileInfo (".")
-									 << QFileInfo ("..")
-									 << kRootPath);
-	}
-
-	void StatDataTest::testSetAndGetSubdirs()
-	{
-		QFETCH (QFileInfoList, dirs);
-
-		StatData stat_data;
-
-		stat_data.setSubdirs (dirs);
-		const QFileInfoList& dirs_from_sdata = stat_data.subdirs();
-
-		QCOMPARE (dirs_from_sdata, dirs);
-	}
-
 	void StatDataTest::testAppendOther()
 	{
 		typedef StatData::ExtRecordsMap::const_iterator It;

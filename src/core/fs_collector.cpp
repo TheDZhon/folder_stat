@@ -150,7 +150,6 @@ namespace core
 
 		const QFileInfoList& files = getFiles (pinfo);
 
-		answer->setSubdirs (subdirs);
 		answer->collectFilesExts (files);
 
 		if (terminator_flag_ != kTerminate) {

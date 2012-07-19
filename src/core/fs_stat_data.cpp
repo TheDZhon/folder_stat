@@ -82,8 +82,7 @@ namespace core
 	}
 
 	bool StatData::operator== (const StatData & other) const {
-		return (subdirs_ == other.subdirs()) 
-			&& (ext_records_ == other.ext_records_)
+		return (ext_records_ == other.ext_records_)
 			&& (all_ == other.all_);
 	}
 

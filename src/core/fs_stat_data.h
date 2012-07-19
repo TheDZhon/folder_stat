@@ -55,13 +55,10 @@ namespace core
 
 		typedef QHash<QString, ExtensionRecord> ExtRecordsMap;
 
-		StatData(): subdirs_(), ext_records_(), all_() {}
+		StatData(): ext_records_(), all_() {}
 		~StatData() {}
 
 		void appendOther (const StatData&);
-
-		inline void setSubdirs (const QFileInfoList & subdirs) { subdirs_ = subdirs; }
-		inline QFileInfoList subdirs () const { return subdirs_; }
 
 		void collectFilesExts (const QFileInfoList&);
 		inline ExtRecordsMap extRecords () const { return ext_records_; }
@@ -74,7 +71,6 @@ namespace core
 
 		void incExtCnt (const QString & ext, quint64 sz);
 
-		QFileInfoList subdirs_;
 		QHash<QString, ExtensionRecord> ext_records_;
 
 		ExtensionRecord all_;
@@ -84,7 +80,6 @@ namespace core
 }
 
 Q_DECLARE_METATYPE (core::StatDataPtr);
-Q_DECLARE_METATYPE (QFileInfoList);
 Q_DECLARE_METATYPE (core::StatData::ExtRecordsMap);
 
 #endif // FS_STAT_DATA_H__

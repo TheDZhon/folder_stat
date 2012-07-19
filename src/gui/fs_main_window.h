@@ -58,6 +58,7 @@ namespace gui
 		void handleQuitAction ();
 		void handleScanAction ();
 		void handleRefreshAction ();
+		void handleCancelAction ();
 		void handleSettingsAction ();
 		void handleAboutAction ();
 		void handleAboutQtAction ();
@@ -79,12 +80,13 @@ namespace gui
 
 		void processSettingsData ();
 		void processScan (bool use_cache);
-		void processFinish (bool success, const QString & mess = QString());
+		void processFinish (const QString & path, bool success, const QString & mess);
 		void clearStats ();
 
 		Ui::MainWindow ui;
 
-		SettingsDialog settings_dialog_;
+		bool isBusy_;
+
 		SettingsData settings_data_;
 
 		core::Collector collector_;

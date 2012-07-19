@@ -41,9 +41,6 @@ namespace test {
 	{
 		Q_OBJECT
 	private slots:
-		void testSetAndGetSubdirs_data() const;
-		void testSetAndGetSubdirs ();
-
 		void testAppendOther_data () const { prepareFiles(); }
 		void testAppendOther ();
 

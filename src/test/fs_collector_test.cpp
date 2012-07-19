@@ -129,16 +129,13 @@ namespace test
 		expected_stats_[kSingleFilePath] = StatDataPtr (single_stat_data_ptr);
 
 		StatDataPtr nested_clean_stat (new StatData);
-		nested_clean_stat->setSubdirs (nested_clean_dirs);
 		expected_stats_[kNestedCleanPath] = nested_clean_stat;
 
 		StatDataPtr one_level_stat (new StatData);
-		one_level_stat->setSubdirs (one_level_dirs);
 		one_level_stat->collectFilesExts(one_level_files);
 		expected_stats_[kOneLevelPath] = one_level_stat;
 
 		StatDataPtr common_stat (new StatData);
-		common_stat->setSubdirs(common_level_dirs_1);
 		common_stat->collectFilesExts(common_level_files_1);
 		common_stat->collectFilesExts(common_level_files_2);
 		expected_stats_[kCommonPath] = common_stat;

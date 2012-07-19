@@ -43,7 +43,7 @@ namespace gui
 
 		bool show_tray_icon_;
 		bool allow_minimize_to_tray_;
-		bool show_notifications_;
+		bool show_tray_notifications_;
 		size_t notification_timeout_;
 
 		bool use_cache_;

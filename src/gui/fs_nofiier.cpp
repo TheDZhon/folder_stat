@@ -65,14 +65,15 @@ namespace gui
 
 	void Notifier::trayMessage (const QString& mess)
 	{
-		if (!settings_data_.show_tray_icon_) { return; }
-		tray_icon_.showMessage (tr (kStatusMessage), mess, QSystemTrayIcon::Information, settings_data_.notification_timeout_);
+		if (settings_data_.show_tray_icon_ && settings_data_.show_tray_notifications_) {
+			tray_icon_.showMessage (tr (kStatusMessage), mess, QSystemTrayIcon::Information, settings_data_.notification_timeout_);
+		}
 	}
 
 	void Notifier::errorMessage (const QString& err_mess)
 	{
 		status_bar_->showMessage (tr (kErrorMessage) + ": " + err_mess);
-		if (settings_data_.show_tray_icon_) {
+		if (settings_data_.show_tray_icon_ && settings_data_.show_tray_notifications_) {
 			tray_icon_.showMessage (tr (kErrorMessage), err_mess, QSystemTrayIcon::Critical, settings_data_.notification_timeout_);
 		}
 	}
@@ -93,8 +94,8 @@ namespace gui
 	void Notifier::init ()
 	{
 		QMainWindow* window = qobject_cast<QMainWindow*> (parent());
-		tray_icon_.show();
 		tray_icon_.setIcon (window->windowIcon());
+		tray_icon_.show();
 		progressbar_.setRange (0, 0);
 
 		status_bar_ = window->statusBar();
