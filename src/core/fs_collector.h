@@ -44,33 +44,76 @@ namespace async = QtConcurrent;
 
 namespace core
 {
+	/**
+	 ** Statistics collector class.
+	 ** Provides high-level API for calculating files information.
+	 ** All public methods are thread-safe and do any work in background.
+	 **/
 	class Collector: public QObject
 	{
 		Q_OBJECT
 	public:
+		/**
+		 ** Default QObject-style constructor.
+		 ** @param[in] parent parent object
+		 **/
 		Collector (QObject* parent = NULL);
+		/**
+		 ** Destructor.
+		 **/
 		virtual ~Collector ();
 	public slots:
+		/**
+		 ** Collect statistics about given file.
+		 ** @param[in] path path for scanning
+		 ** @param[in] use_cache use internal cache for fast lookup
+		 **/
 		inline void collect (const QString& path, bool use_cache) {
 			terminator_flag_ = kWork;
 			async::run (this, &Collector::collectImpl, path, use_cache);
 		}
-		
+		/**
+		 ** Cancel current collect operations.
+		 **/
 		void cancel ();
-
+		/**
+		 ** Set new cache capacity.
+		 ** @param[in] sz capacity
+		 **/
 		inline void setCacheSize (size_t sz) {
 			async::run (&cacher_, &Cacher::setMaxSize, sz);
 		}
+		/**
+		 ** Clear all data from cache.
+		 **/
 		inline void clearCache () {
 			async::run (&cacher_, &Cacher::clear);
 		}
 	signals:
-		void error (const QString&, const QString&) const;
-		void directSubfolders (const QString&, int cnt) const;
-		void currentScannedDir (const QString&, const QString&) const;
-		void finished (const QString&, const core::StatDataPtr&) const;
-	private slots:
-
+		/**
+		 ** Report error while scanning.
+		 ** @param[in] path scanning path
+		 ** @param[in] mess error message
+		 **/
+		void error (const QString& path, const QString& mess) const;
+		/**
+		 ** Report direct subfolders for path.
+		 ** @param[in] path scanning path
+		 ** @param[in] cnt subfolders number
+		 **/
+		void directSubfolders (const QString& path, int cnt) const;
+		/**
+		 ** Report scanning progress (current scanned directory).
+		 ** @param[in] path scanning path
+		 ** @param[in] current_dir current scanned directory
+		 **/
+		void currentScannedDir (const QString& path, const QString& current_dir) const;
+		/**
+		 ** Report successfully completion of scanning task.
+		 ** @param[in] path scanning path
+		 ** @param[in] stat_data collected statistical data
+		 **/
+		void finished (const QString& path, const core::StatDataPtr& stat_data) const;
 	private:
 		struct mapper;
 		struct reducer;
@@ -78,7 +121,7 @@ namespace core
 		friend struct mapper;
 		friend struct reducer;
 
-		enum {
+		enum TerminationState {
 			kTerminate,
 			kWork
 		};

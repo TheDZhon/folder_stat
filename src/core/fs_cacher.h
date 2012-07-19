@@ -39,17 +39,49 @@
 
 namespace core
 {
+	/**
+	 ** Cacher class. 
+	 ** Provides thread-safe data caching with many readers/one writer scheme.
+	 **/
 	class Cacher
 	{
 	public:
+		/**
+		 ** Default constructor.
+		 ** @param[in] init_sz cache capacity.
+		 **/
 		Cacher (size_t init_sz = 10000);
+		/**
+		 ** Destructor. 
+		 **/
 		~Cacher () {}
-
+		/**
+		 ** Get stat data item from cache by path.
+		 ** @param[in] path key
+		 ** @return found value or default constructed pointer if key not exists
+		 **/
 		StatDataPtr get (const QString& path) const;
+		/**
+		 ** Store stat data item in cache
+		 ** @param[in] path key
+		 ** @param[in] stat_data value
+		 **/
 		void store (const QString& path, const StatDataPtr& stat_data);
-
+		/**
+		 ** Set cache capacity. 
+		 ** Old items removed when capacity exceeded.
+		 ** @param[in] num new capacity
+		 **/
 		void setMaxSize (size_t num);
+		/**
+		 ** Remove stat data for given path from cache.
+		 ** Does nothing for unknown path.
+		 ** @param[in] path key
+		 **/
 		void invalidate (const QString& path);
+		/**
+		 ** Remove all stat data from cache.
+		 **/
 		void clear ();
 	private:
 		typedef QCache<QString, StatDataPtr> StatDataCache;

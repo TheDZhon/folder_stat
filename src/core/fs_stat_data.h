@@ -43,28 +43,58 @@ namespace core
 	class StatData;
 	typedef QSharedPointer<StatData> StatDataPtr;
 
+	/**
+	 ** Statistics data structure.
+	 ** Provides convenient methods for collecting/retrieving information.
+	 **/
 	class StatData
 	{
 	public:
+		/**
+		 ** Record about file group (files grouped by extension).
+		 **/
 		struct ExtensionRecord {
+			/**
+			 ** Default constructors.
+			 ** Sets all fields to 0.
+			 **/
 			ExtensionRecord();
 
-			quint64 count_;
-			quint64 total_size_;
+			quint64 count_;      /**< Number of files */
+			quint64 total_size_; /**< Size of files, bytes */
 		};
-
+		/**
+		 ** Container of ExtensionRecord objects.
+		 ** Maps file extensions to statistics data.
+		 **/
 		typedef QHash<QString, ExtensionRecord> ExtRecordsMap;
-
+		/**
+		 ** Default constructor.
+		 **/
 		StatData(): ext_records_(), all_() {}
+		/**
+		 ** Destructor.
+		 **/
 		~StatData() {}
-
-		void appendOther (const StatData&);
-
-		void collectFilesExts (const QFileInfoList&);
+		/**
+		 ** Combine statistics data with another instance.
+		 ** @param[in] other another instance
+		 **/
+		void appendOther (const StatData& other);
+		/**
+		 ** Update statistics by parsing given files list
+		 ** @param[in] files data for statistics
+		 **/
+		void collectFilesExts (const QFileInfoList& files);
+		/**
+		 ** Get collected statistics.
+		 **/
 		inline ExtRecordsMap extRecords () const { return ext_records_; }
-
+		/**
+		 ** Get collected statistics for <all> pseudo-group.
+		 **/
 		inline ExtensionRecord all () const { return all_; }
-
+		
 		bool operator==(const StatData & other) const;
 	private:
 		Q_DISABLE_COPY (StatData);

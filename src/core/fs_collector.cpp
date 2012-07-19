@@ -35,6 +35,7 @@ namespace
 {
 	const char * kNotExists = QT_TRANSLATE_NOOP ("core::Collector", "Invalid path");
 	const char * kNotADir = QT_TRANSLATE_NOOP ("core::Collector", "Not a directory");
+	const char * kCantRead = QT_TRANSLATE_NOOP ("core::Collector", "Path is not readable");
 	const char * kCanceled = QT_TRANSLATE_NOOP ("core::Collector", "Task canceled by user");
 
 	const QDir::Filters kCommonFilters = QDir::Readable
@@ -113,6 +114,7 @@ namespace core
 
 		if (!pathInfo.exists()) { emit error (path, tr(kNotExists)); return; }
 		if (!pathInfo.isDir()) { emit error (path, tr(kNotADir)); return; }
+		if (!pathInfo.isReadable()) { emit error (path, tr (kCantRead)); return; }
 
 		emit directSubfolders (path, getSubdirs (pathInfo).size());
 
