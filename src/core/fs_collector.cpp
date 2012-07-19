@@ -108,8 +108,6 @@ namespace core
 
 	void Collector::collectImpl (const QString& path, bool use_cache)
 	{
-		terminator_flag_ = kWork;
-
 		const QString& canonPath = QFileInfo (path).canonicalFilePath();
 		const QFileInfo pathInfo (canonPath);
 

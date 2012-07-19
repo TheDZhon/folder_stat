@@ -190,7 +190,7 @@
 				Name="ui"
 				>
 				<File
-					RelativePath="..\..\..\..\src\gui\fs_dirs_tree_view.cpp"
+					RelativePath="..\..\..\..\src\gui\fs_dirs_tree_widget.cpp"
 					>
 				</File>
 				<File
@@ -198,11 +198,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\..\src\gui\fs_nofiier.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\..\src\gui\fs_settings_dialog.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\src\gui\fs_stat_table_model.cpp"
+					RelativePath="..\..\..\..\src\gui\fs_stat_table_widget.cpp"
 					>
 				</File>
 			</Filter>
@@ -216,14 +220,14 @@
 				Name="gui"
 				>
 				<File
-					RelativePath="..\..\..\..\src\gui\fs_dirs_tree_view.h"
+					RelativePath="..\..\..\..\src\gui\fs_dirs_tree_widget.h"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							Description="Moc&apos;ing fs_dirs_tree_view.h..."
+							Description="Moc&apos;ing fs_dirs_tree_widget.h..."
 							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB &quot;-I.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles&quot; &quot;-I.\.\..\..\..\..\src&quot; &quot;-I.\..\..\..\..\src\gui\ui&quot;&#x0D;&#x0A;"
 							AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 							Outputs="&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
@@ -234,7 +238,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							Description="Moc&apos;ing fs_dirs_tree_view.h..."
+							Description="Moc&apos;ing fs_dirs_tree_widget.h..."
 							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB &quot;-I.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles&quot; &quot;-I.\.\..\..\..\..\src&quot; &quot;-I.\..\..\..\..\src\gui\ui&quot;&#x0D;&#x0A;"
 							AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 							Outputs="&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
@@ -272,6 +276,32 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\..\..\src\gui\fs_nofiier.h"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Moc&apos;ing fs_nofiier.h..."
+							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB &quot;-I.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles&quot; &quot;-I.\.\..\..\..\..\src&quot; &quot;-I.\..\..\..\..\src\gui\ui&quot;&#x0D;&#x0A;"
+							AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+							Outputs="&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Moc&apos;ing fs_nofiier.h..."
+							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB &quot;-I.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles&quot; &quot;-I.\.\..\..\..\..\src&quot; &quot;-I.\..\..\..\..\src\gui\ui&quot;&#x0D;&#x0A;"
+							AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+							Outputs="&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\..\..\..\src\gui\fs_settings_dialog.h"
 					>
 					<FileConfiguration
@@ -298,14 +328,14 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\..\src\gui\fs_stat_table_model.h"
+					RelativePath="..\..\..\..\src\gui\fs_stat_table_widget.h"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							Description="Moc&apos;ing fs_stat_table_model.h..."
+							Description="Moc&apos;ing fs_stat_table_widget.h..."
 							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB &quot;-I.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles&quot; &quot;-I.\.\..\..\..\..\src&quot; &quot;-I.\..\..\..\..\src\gui\ui&quot;&#x0D;&#x0A;"
 							AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 							Outputs="&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
@@ -316,7 +346,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							Description="Moc&apos;ing fs_stat_table_model.h..."
+							Description="Moc&apos;ing fs_stat_table_widget.h..."
 							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB &quot;-I.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I.\.\..\..\..\..\tmp\GeneratedFiles&quot; &quot;-I.\.\..\..\..\..\src&quot; &quot;-I.\..\..\..\..\src\gui\ui&quot;&#x0D;&#x0A;"
 							AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 							Outputs="&quot;.\.\..\..\..\..\tmp\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
@@ -514,7 +544,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\..\tmp\GeneratedFiles\Release\moc_fs_dirs_tree_view.cpp"
+					RelativePath="..\..\..\..\tmp\GeneratedFiles\Release\moc_fs_dirs_tree_widget.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -538,6 +568,18 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\..\..\tmp\GeneratedFiles\Release\moc_fs_nofiier.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\..\..\..\tmp\GeneratedFiles\Release\moc_fs_settings_dialog.cpp"
 					>
 					<FileConfiguration
@@ -550,7 +592,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\..\tmp\GeneratedFiles\Release\moc_fs_stat_table_model.cpp"
+					RelativePath="..\..\..\..\tmp\GeneratedFiles\Release\moc_fs_stat_table_widget.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -580,7 +622,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\..\tmp\GeneratedFiles\Debug\moc_fs_dirs_tree_view.cpp"
+					RelativePath="..\..\..\..\tmp\GeneratedFiles\Debug\moc_fs_dirs_tree_widget.cpp"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -615,6 +657,29 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\..\..\tmp\GeneratedFiles\Debug\moc_fs_nofiier.cpp"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\..\..\..\tmp\GeneratedFiles\Debug\moc_fs_settings_dialog.cpp"
 					>
 					<FileConfiguration
@@ -638,7 +703,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\..\tmp\GeneratedFiles\Debug\moc_fs_stat_table_model.cpp"
+					RelativePath="..\..\..\..\tmp\GeneratedFiles\Debug\moc_fs_stat_table_widget.cpp"
 					>
 					<FileConfiguration
 						Name="Release|Win32"

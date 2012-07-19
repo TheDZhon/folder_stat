@@ -84,11 +84,18 @@ namespace test
 
 	void CollectorTest::testCancel()
 	{
+		Collector collector;
 
+		collector.collect(QDir::rootPath(), false);
+		collector.cancel();
+
+		QVERIFY(waitForSignal(&collector, SIGNAL (error(const QString&, const QString&)), 10000));
 	}
 
 	void CollectorTest::initTestCase()
 	{
+		cleanupTestCase(); // remove old directories
+
 		qsrand (time (NULL));
 
 		//

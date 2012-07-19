@@ -102,6 +102,8 @@ namespace gui
 
 	void MainWindow::handleCancelAction()
 	{
+		notifier_.trayMessage(tr("Cancel requested"));
+
 		ui.cancelCollectAction->setDisabled(true);
 		collector_.cancel();
 	}

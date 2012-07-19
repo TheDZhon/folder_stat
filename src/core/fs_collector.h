@@ -52,6 +52,7 @@ namespace core
 		virtual ~Collector ();
 	public slots:
 		inline void collect (const QString& path, bool use_cache) {
+			terminator_flag_ = kWork;
 			async::run (this, &Collector::collectImpl, path, use_cache);
 		}
 		
