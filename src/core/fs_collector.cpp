@@ -33,9 +33,9 @@
 
 namespace
 {
-	const char * kNotExists = QT_TR_NOOP ("Invalid path");
-	const char * kNotADir = QT_TR_NOOP ("Not a directory");
-	const char * kCanceled = QT_TR_NOOP ("Canceled");
+	const char * kNotExists = QT_TRANSLATE_NOOP ("core::Collector", "Invalid path");
+	const char * kNotADir = QT_TRANSLATE_NOOP ("core::Collector", "Not a directory");
+	const char * kCanceled = QT_TRANSLATE_NOOP ("core::Collector", "Canceled");
 
 	const QDir::Filters kCommonFilters = QDir::Readable
 										 | QDir::Hidden
@@ -86,7 +86,7 @@ namespace core
 		StatDataPtr acc_;
 	};
 
-	Collector::Collector (QObject* parent /*= NULL*/) :
+	Collector::Collector (QObject* parent) :
 		QObject (parent),
 		cacher_(),
 		terminator_flag_ (kWork),

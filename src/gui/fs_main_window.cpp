@@ -40,9 +40,9 @@ namespace
 	const size_t kStatusTruncateSymbols = 40;
 }
 
-const char* kAppName = QT_TR_NOOP ("Folder Stat GUI");
-const char* kOrgName = QT_TR_NOOP ("PrefixInc");
-const char* kCopyright = QT_TR_NOOP ("(c) 2012, Eugene Mamin");
+const char* kAppName = QT_TRANSLATE_NOOP ("gui::MainWindow", "Folder Stat GUI");
+const char* kOrgName = QT_TRANSLATE_NOOP ("gui::MainWindow", "PrefixInc");
+const char* kCopyright = QT_TRANSLATE_NOOP ("gui::MainWindow", "(c) 2012, Eugene Mamin");
 
 namespace gui
 {

@@ -43,25 +43,26 @@ namespace
 		kColumnsCnt
 	};
 
-	const char* kEmptyExtension = QT_TR_NOOP("<None>");
-	const char* kAllFiles = QT_TR_NOOP("<All files>");
+	const char* kEmptyExtension = QT_TRANSLATE_NOOP("gui::StatTableModel", "<None>");
+	const char* kAllFiles = QT_TRANSLATE_NOOP("gui::StatTableModel", "<All files>");
 
 	const char* kColumnnames [] = {
-		QT_TR_NOOP("Extension"),
-		QT_TR_NOOP("Count"),
-		QT_TR_NOOP("Total size"),
-		QT_TR_NOOP("Average size")
+		QT_TRANSLATE_NOOP("gui::StatTableModel", "Extension"),
+		QT_TRANSLATE_NOOP("gui::StatTableModel", "Count"),
+		QT_TRANSLATE_NOOP("gui::StatTableModel", "Total size"),
+		QT_TRANSLATE_NOOP("gui::StatTableModel", "Average size")
+	};
+
+	const char* kSizesSuffixes [] = {
+		QT_TRANSLATE_NOOP("gui::StatTableModel", "B"),
+		QT_TRANSLATE_NOOP("gui::StatTableModel", "KB"),
+		QT_TRANSLATE_NOOP("gui::StatTableModel", "MB"),
+		QT_TRANSLATE_NOOP("gui::StatTableModel", "GB"),
+		QT_TRANSLATE_NOOP("gui::StatTableModel", "TB"),
+		QT_TRANSLATE_NOOP("gui::StatTableModel", "EB")
 	};
 
 	const double kOrderLimit = 1024.;
-	const char* kSizesSuffixes [] = {
-		QT_TR_NOOP("B"),
-		QT_TR_NOOP("KB"),
-		QT_TR_NOOP("MB"),
-		QT_TR_NOOP("GB"),
-		QT_TR_NOOP("TB"),
-		QT_TR_NOOP("EB")
-	};
 }
 
 QString humanReadableSize (double sz)
@@ -120,7 +121,7 @@ namespace gui
 			switch (col) {
 				case kExtension: {
 					const QString& ext = it.key();
-					return ext.isEmpty() ? kEmptyExtension : ext;
+					return ext.isEmpty() ? tr(kEmptyExtension) : ext;
 				}
 				case kCount: return it->count_;
 				case kTotalSize: return humanReadableSize (it->total_size_);
@@ -150,7 +151,7 @@ namespace gui
 		beginResetModel();
 
 		data_ = stat_data->extRecords();
-		data_[kAllFiles] = stat_data->all();
+		data_[tr(kAllFiles)] = stat_data->all();
 
 		endResetModel();
 	}
