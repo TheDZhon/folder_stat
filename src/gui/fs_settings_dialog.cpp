@@ -29,11 +29,8 @@
 
 #include <QSettings>
 
-namespace
-{
-	const QString kAppName = "Folder Stat GUI";
-	const QString kOrgName = "PrefixInc";
-}
+extern const char * kAppName;
+extern const char * kOrgName;
 
 namespace gui
 {

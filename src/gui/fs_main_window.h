@@ -36,7 +36,6 @@
 
 #include "gui/fs_settings_dialog.h"
 #include "core/fs_collector.h"
-#include "gui/fs_stat_table_model.h"
 
 #include <QtGui/QMainWindow>
 #include <QSystemTrayIcon>
@@ -53,20 +52,21 @@ namespace gui
 
 		virtual void setVisible(bool);
 	private slots:
+		void handleCurrentPathChanged (const QString & path);
+
 		void handleQuitAction ();
+		void handleScanAction ();
 		void handleRefreshAction ();
 		void handleSettingsAction ();
-
 		void handleAboutAction ();
 		void handleAboutQtAction ();
 
-		void handleTrayActivated(QSystemTrayIcon::ActivationReason);
-
-		void handleScanRequest (const QString & path);
-
 		void handleError (const QString& path, const QString & error);
-		void handleDirsCollected (const QString&, const QFileInfoList&);
+		void handleDirectSubfolders (const QString & path, int cnt);
+		void handleCurrentScannedDir (const QString&, const QString&);
 		void handleFinished (const QString & path, const core::StatDataPtr & data);
+
+		void handleTrayActivated(QSystemTrayIcon::ActivationReason);
 	private:
 		Q_DISABLE_COPY (MainWindow);
 
@@ -79,18 +79,17 @@ namespace gui
 		void saveWindowState () const;
 
 		void processSettingsData ();
+		void processScan (bool use_cache);
+		void processFinish (bool success, const QString & mess = QString());
 
 		Ui::MainWindow ui;
 
-		QSystemTrayIcon tray_icon_;
 		SettingsDialog settings_dialog_;
-
 		SettingsData settings_data_;
 
 		core::Collector collector_;
 
-		StatTableModel stat_model_;
-
+		QSystemTrayIcon tray_icon_;
 		QProgressBar progressbar_;
 	};
 }

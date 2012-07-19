@@ -32,18 +32,17 @@
 #include <QCloseEvent>
 #include <QPushButton>
 #include <QProgressBar>
-#include <QSortFilterProxyModel>
 
 using namespace core;
 
 namespace
 {
-	const char* kAppName = "Folder Stat GUI";
-	const char* kOrgName = "PrefixInc";
-	const char* kCopyright = "(c) 2012, Eugene Mamin";
-
 	const size_t kStatusTruncateSymbols = 40;
 }
+
+const char* kAppName = QT_TR_NOOP ("Folder Stat GUI");
+const char* kOrgName = QT_TR_NOOP ("PrefixInc");
+const char* kCopyright = QT_TR_NOOP ("(c) 2012, Eugene Mamin");
 
 namespace gui
 {
@@ -54,7 +53,6 @@ namespace gui
 		  settings_dialog_(),
 		  settings_data_ (settings_dialog_.settings()),
 		  collector_(),
-		  stat_model_(),
 		  progressbar_()
 	{
 		ui.setupUi (this);
@@ -63,13 +61,12 @@ namespace gui
 		connectUi();
 		configureUi();
 
-		qRegisterMetaType<QFileInfoList> ("QFileInfoList");
 		qRegisterMetaType<core::StatDataPtr> ("core::StatDataPtr");
 	}
 
 	MainWindow::~MainWindow()
 	{
-		progressbar_.setParent(0);
+		progressbar_.setParent (0);
 	}
 
 	void MainWindow::setVisible (bool visible)
@@ -77,6 +74,12 @@ namespace gui
 		ui.hideWindowAction->setVisible (visible);
 		ui.restoreWindowAction->setVisible (!visible);
 		QMainWindow::setVisible (visible);
+	}
+
+	void MainWindow::handleCurrentPathChanged (const QString& path)
+	{
+		ui.scanAction->setEnabled (true);
+		ui.refreshAction->setEnabled (false);
 	}
 
 	void MainWindow::handleQuitAction()
@@ -87,8 +90,14 @@ namespace gui
 		qApp->quit();
 	}
 
+	void MainWindow::handleScanAction()
+	{
+		processScan (settings_data_.use_cache_);
+	}
+
 	void MainWindow::handleRefreshAction()
 	{
+		processScan (false);
 	}
 
 	void MainWindow::handleSettingsAction()
@@ -104,7 +113,7 @@ namespace gui
 
 	void MainWindow::handleAboutAction()
 	{
-		QMessageBox::about (this, "About", QString (tr (kAppName)) + " " + QString (tr (kCopyright)));
+		QMessageBox::about (this, tr ("About"), QString (tr (kAppName)) + " " + QString (tr (kCopyright)));
 	}
 
 	void MainWindow::handleAboutQtAction()
@@ -121,44 +130,30 @@ namespace gui
 				};
 				break;
 			case QSystemTrayIcon::MiddleClick:
-				tray_icon_.showMessage ("Current status", statusBar()->currentMessage());
+				tray_icon_.showMessage (tr ("Current status").append (": "), statusBar()->currentMessage());
 				break;
 			default:
 				;
 		}
 	}
 
-	void MainWindow::handleScanRequest(const QString & path)
-	{
-		ui.refreshAction->setDisabled(true);
-		ui.collectedStatGroupBox->setTitle(QString());
-		stat_model_.clear();
-		ui.cancelCollectAction->setEnabled(true);
-		collector_.collect(path);
-
-		progressbar_.show();
-	}
-
 	void MainWindow::handleError (const QString& path, const QString& error)
 	{
-		ui.refreshAction->setEnabled(true);
-		ui.cancelCollectAction->setDisabled(true);
-		progressbar_.hide();
-
-		const QString err_mess = "Error processing " + path + ": " + error;
-
-		statusBar()->showMessage (err_mess);
-		if (settings_data_.show_notifications_) {
-			tray_icon_.showMessage (tr ("Error"), err_mess, QSystemTrayIcon::Critical);
-		}
+		processFinish (false, tr ("Error").append (": ") + error);
 	}
 
-	void MainWindow::handleDirsCollected (const QString& p, const QFileInfoList& l)
+	void MainWindow::handleDirectSubfolders (const QString& path, int cnt)
 	{
-		QString copy_p (p.right(kStatusTruncateSymbols));
-		
+		ui.childrenCntSpinBox->setEnabled (true);
+		ui.childrenCntSpinBox->setValue (cnt);
+	}
+
+	void MainWindow::handleCurrentScannedDir (const QString& p, const QString& current)
+	{
+		QString copy_p (current.right (kStatusTruncateSymbols));
+
 		if (p.length() > kStatusTruncateSymbols) {
-			copy_p.prepend("...");
+			copy_p.prepend ("...");
 		}
 
 		statusBar()->showMessage (QString ("collecting: ") + copy_p);
@@ -166,12 +161,9 @@ namespace gui
 
 	void MainWindow::handleFinished (const QString& path, const StatDataPtr& ptr)
 	{
-		ui.refreshAction->setEnabled(true);
-		ui.collectedStatGroupBox->setTitle (path);
-		ui.cancelCollectAction->setDisabled(true);
-		progressbar_.hide();
+		ui.tableView->setData (path, ptr);
 
-		statusBar()->showMessage (path + ": task finished");
+		processFinish (true, "Finished");
 	}
 
 	void MainWindow::configureUi()
@@ -190,16 +182,16 @@ namespace gui
 		m->addAction (ui.hideWindowAction);
 		m->addAction (ui.restoreWindowAction);
 		m->addSeparator();
+		m->addAction (ui.clearCacheAction);
+		m->addAction (ui.cancelCollectAction);
+		m->addSeparator();
 		m->addAction (ui.quitAction);
 
-		QSortFilterProxyModel * mod = new QSortFilterProxyModel;
-		mod->setSourceModel(&stat_model_);
-		ui.tableView->setModel (mod);
-		ui.tableView->horizontalHeader()->setResizeMode (QHeaderView::Stretch);
+		ui.treeView->addAction (ui.scanAction);
+		ui.treeView->addAction (ui.refreshAction);
 
-
-		progressbar_.setRange(0, 0);
-		statusBar()->addPermanentWidget(&progressbar_);
+		progressbar_.setRange (0, 0);
+		statusBar()->addPermanentWidget (&progressbar_);
 		progressbar_.hide();
 
 		processSettingsData();
@@ -210,9 +202,20 @@ namespace gui
 		connect (ui.quitAction,
 				 SIGNAL (triggered()),
 				 SLOT (handleQuitAction()));
+		connect (ui.scanAction,
+				 SIGNAL (triggered()),
+				 SLOT (handleScanAction()));
 		connect (ui.refreshAction,
 				 SIGNAL (triggered()),
 				 SLOT (handleRefreshAction()));
+		connect (ui.cancelCollectAction,
+				 SIGNAL (triggered()),
+				 &collector_,
+				 SLOT (cancel()));
+		connect (ui.clearCacheAction,
+				 SIGNAL (triggered()),
+				 &collector_,
+				 SLOT (clearCache ()));
 		connect (ui.settingsAction,
 				 SIGNAL (triggered()),
 				 SLOT (handleSettingsAction()));
@@ -227,32 +230,22 @@ namespace gui
 				 SIGNAL (activated (QSystemTrayIcon::ActivationReason)),
 				 SLOT (handleTrayActivated (QSystemTrayIcon::ActivationReason)));
 
-		connect (ui.treeView,
-				 SIGNAL (scanRequest (const QString&)),
-				 SLOT (handleScanRequest(const QString&)));
-
 		connect (&collector_,
 				 SIGNAL (error (const QString&, const QString&)),
 				 SLOT (handleError (const QString&, const QString&)));
 		connect (&collector_,
-				 SIGNAL (dirsCollected (const QString&, const QFileInfoList&)),
-				 SLOT (handleDirsCollected (const QString&, const QFileInfoList&)));
+				 SIGNAL (currentScannedDir (const QString&, const QString&)),
+				 SLOT (handleCurrentScannedDir (const QString&, const QString&)));
+		connect (&collector_,
+				 SIGNAL (directSubfolders (const QString&, int)),
+				 SLOT (handleDirectSubfolders (const QString&, int)));
 		connect (&collector_,
 				 SIGNAL (finished (const QString&, const core::StatDataPtr&)),
 				 SLOT (handleFinished (const QString, const core::StatDataPtr&)));
-		connect (&collector_,
-				 SIGNAL (finished (const QString&, const core::StatDataPtr&)),
-				 &stat_model_,
-				 SLOT (handleNewData (const QString, const core::StatDataPtr&)));
 
-		connect (ui.cancelCollectAction,
-				 SIGNAL (triggered()),
-				 &collector_,
-				 SLOT (cancel()));
-		connect (ui.clearCacheAction,
-				 SIGNAL (triggered()),
-				 &collector_,
-				 SLOT (clearCache ()));
+		connect (ui.treeView,
+				 SIGNAL (currentPathChanged (const QString&)),
+				 SLOT (handleCurrentPathChanged (const QString&)));
 	}
 
 	void MainWindow::closeEvent (QCloseEvent* ev)
@@ -319,6 +312,37 @@ namespace gui
 		ui.restoreWindowAction->setEnabled (settings_data_.allow_minimize_to_tray_);
 
 		collector_.setCacheSize (settings_data_.max_cache_items_);
-		collector_.setCacheEnabled (settings_data_.use_cache_);
+	}
+
+	void MainWindow::processScan (bool use_cache)
+	{
+		ui.collectedStatGroupBox->setTitle (QString());
+		ui.tableView->clearData();
+
+		ui.cancelCollectAction->setEnabled (true);
+		ui.scanAction->setDisabled (true);
+		ui.refreshAction->setDisabled (true);
+
+		const QString& path = ui.treeView->currentFilePath();
+
+		ui.collectedStatGroupBox->setTitle (path);
+		progressbar_.show();
+
+		collector_.collect (path, use_cache);
+	}
+
+	void MainWindow::processFinish (bool success, const QString& mess)
+	{
+		const QString& path = ui.treeView->currentFilePath();
+
+		ui.scanAction->setDisabled(success);
+		ui.refreshAction->setEnabled (success);
+		ui.cancelCollectAction->setDisabled (true);
+
+		progressbar_.hide();
+
+		if (!mess.isEmpty()) {
+			statusBar()->showMessage (mess);
+		}
 	}
 }

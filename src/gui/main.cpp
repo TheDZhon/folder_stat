@@ -28,13 +28,19 @@
 #include "fs_main_window.h"
 
 #include <QtGui/QApplication>
+#include <QTranslator>
 
 using namespace gui;
 
-int main(int argc, char *argv[])
+int main (int argc, char* argv[])
 {
-	QApplication a(argc, argv);
-	MainWindow w;
-	w.show();
-	return a.exec();
+	QApplication app (argc, argv);
+
+	QTranslator qtTranslator;
+	qtTranslator.load ("folder_stat_" + QLocale::system().name());
+	app.installTranslator (&qtTranslator);
+
+	MainWindow window;
+	window.show();
+	return app.exec();
 }

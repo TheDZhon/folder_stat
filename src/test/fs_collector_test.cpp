@@ -74,7 +74,7 @@ namespace test
 			SIGNAL (finished (const QString&, const core::StatDataPtr&)),
 			SLOT (handleScanFinished(const QString&, const core::StatDataPtr&)));
 
-		collector.collect(QDir::tempPath() + "/" + path);
+		collector.collect(QDir::tempPath() + "/" + path, false);
 		QVERIFY(waitForSignal(this, SIGNAL (scanFinished()), 10000));
 
 		QVERIFY (!current_stat_.isNull());
